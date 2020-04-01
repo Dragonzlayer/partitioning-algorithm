@@ -18,11 +18,41 @@ def get_parameters():
             machines_num = int(input("How many machines: "))  # TODO make sure valid (int, >= 2) input
             if machines_num >= MIN_NUM_MACHINES:
                 break
+            else:
+                raise ValueError
         except ValueError:
             print("Please enter a valid number, integer >= 2.")
-    jobs_num = int(input("How many jobs: "))  # TODO make sure valid - divisible by two
-    lower_num = int(input("Lower bound: "))  # TODO make sure valid
-    upper_num = int(input("Upper bound: "))  # TODO make sure valid
+
+    while True:
+        try:
+            jobs_num = int(input("How many jobs: "))  # TODO make sure valid - divisible by two
+            if jobs_num % 2 == 0 and jobs_num>0:
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            print("Please enter a positive number divisible by two")
+
+    while True:
+        try:
+            lower_num = int(input("Lower bound: "))  # TODO make sure valid- non-negative number
+            if lower_num >= 0:
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            print("Please enter a non-negative integer")
+
+    while True:
+        try:
+            upper_num = int(input("Upper bound: "))  # TODO make sure valid
+            if upper_num > lower_num:
+                break
+            else:
+                raise ValueError
+        except ValueError:
+            print("Please print a value bigger than lower bound")
+
     process_time = np.random.randint(lower_num, upper_num, jobs_num)
     return process_time, machines_num
 

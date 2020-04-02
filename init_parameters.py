@@ -54,5 +54,8 @@ def get_parameters():
             print("Please print a value bigger than lower bound")
 
     process_time = np.random.randint(lower_num, upper_num, jobs_num)
+    print("Drawing job times...")
+    print("Job times: ", process_time)
+    print("Number of Machines: ", machines_num)
     return process_time, machines_num
 

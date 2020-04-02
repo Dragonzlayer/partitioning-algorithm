@@ -1,0 +1,6 @@
+question about pseudo code of local search: if we've increased the search space and found a better solution,
+do we need to try and improve this solution by the same search space? or to try and improve the solution by the small search space?
+
+question2 what do you mean by file? is sending through a function good enough?
+
+#TODO in local search - instead of greedy approach - check all possible transfers

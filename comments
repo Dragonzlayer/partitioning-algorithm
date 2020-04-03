@@ -5,4 +5,7 @@ question2 what do you mean by file? is sending through a function good enough?
 
 #TODO in local search - instead of greedy approach - check all possible transfers
 
-#TODO - check for max machine in max machines
+#TODO - check for max machine in max machines,
+because when there is tie in sums the algo cannot improve if the
+improvement can come from a machine that is not the first machine
+because currently we can only improve the first machine

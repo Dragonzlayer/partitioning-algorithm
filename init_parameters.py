@@ -7,6 +7,7 @@ From user:
 Then: draw processing time for each machine according to the lower and upper bounds given by the user and assign p.t for each job.
 """
 import numpy as np
+np.random.seed(0)  # todo delete before submission
 
 
 MIN_NUM_MACHINES = 2
@@ -56,6 +57,6 @@ def get_parameters():
     process_time = np.random.randint(lower_num, upper_num, jobs_num)
     print("Drawing job times...")
     print("Job times: ", process_time)
-    print("Number of Machines: ", machines_num)
+    print("Number of machines: ", machines_num)
     return process_time, machines_num
 

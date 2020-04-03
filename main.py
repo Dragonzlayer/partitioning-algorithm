@@ -55,9 +55,15 @@ from init_parameters import get_parameters
 
 def transfer_jobs(curr_state, search_space):
     is_changed = False
-    sum_pt = [sum(np.array(element)**2) for element in curr_state]
+    sum_pt = [sum(np.array(element)) for element in curr_state]
+    sum_squared_pt = [sum(np.array(element)**2) for element in curr_state]
     sum_pt = np.array(sum_pt)
     max_sum_pt = max(sum_pt)
+
+    sum_squared_pt = np.array(sum_squared_pt)
+    max_sum_squared_pt = max(sum_squared_pt)
+
+
     max_machine = np.argmax(sum_pt)  # TODO check if working
     # print("max machine = ", max_machine)
 
@@ -82,18 +88,26 @@ def transfer_jobs(curr_state, search_space):
             destination_machine = available_machines[0]
 
             temp_sum_pt = copy.deepcopy(sum_pt)
-            temp_sum_pt[max_machine] -= job_to_move**2
-            temp_sum_pt[destination_machine] += job_to_move**2
-
+            temp_sum_pt[max_machine] -= job_to_move
+            temp_sum_pt[destination_machine] += job_to_move
             max_temp_sum_pt = max(temp_sum_pt)
 
-            if max_temp_sum_pt < max_sum_pt:
+            temp_squared_sum_pt = copy.deepcopy(sum_squared_pt)
+            temp_squared_sum_pt[max_machine] -= job_to_move**2
+            temp_squared_sum_pt[destination_machine] += job_to_move**2
+            max_temp_squared_sum_pt = max(temp_squared_sum_pt)
+
+            if max_temp_sum_pt < max_sum_pt or max_temp_squared_sum_pt < max_sum_squared_pt:
+                print("sum: ",max_temp_sum_pt,"Squared: ", max_temp_squared_sum_pt)
+                print("sum: ",temp_sum_pt,"Squared: ", temp_squared_sum_pt)
                 curr_state[destination_machine] = np.append(curr_state[destination_machine], job_to_move)
                 curr_state[max_machine] = np.delete(curr_state[max_machine], 0)
 
                 sum_pt = temp_sum_pt
-
                 max_sum_pt = max(sum_pt)
+
+                sum_squared_pt = temp_squared_sum_pt
+                max_sum_squared_pt = max(sum_squared_pt)
 
                 max_machine = np.argmax(sum_pt)
 

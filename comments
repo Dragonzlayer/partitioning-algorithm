@@ -4,3 +4,5 @@ do we need to try and improve this solution by the same search space? or to try 
 question2 what do you mean by file? is sending through a function good enough?
 
 #TODO in local search - instead of greedy approach - check all possible transfers
+
+#TODO - check for max machine in max machines

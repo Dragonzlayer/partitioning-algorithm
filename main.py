@@ -54,7 +54,7 @@ from init_parameters import get_parameters
 
 
 class LocalSearch:
-    def __init__(self, state):
+    def __init__(self, state, search_space=1):
         self.curr_state = state
         self.sum_pt = np.array([sum(np.array(element)) for element in self.curr_state])
         self.sum_squared_pt = np.array([sum(np.array(element) ** 2) for element in self.curr_state])
@@ -62,6 +62,7 @@ class LocalSearch:
         self.max_sum_squared_pt = max(self.sum_squared_pt)
         self.temp_sum_pt = []
         self.temp_squared_sum_pt = []
+        self.search_space = search_space
 
     def search(self):
         min_search_space = 1
@@ -74,9 +75,13 @@ class LocalSearch:
             is_changed = self._transfer_jobs(search_space)
             print(self.curr_state)
             if not is_changed:
-                break
-            else:
+
                 search_space = search_space + 1
+                is_changed = self._transfer_jobs(search_space)
+                print(self.curr_state)
+                if not is_changed:
+                    break
+                    print("final answer: ", self.curr_state)
 
     def _transfer_jobs(self, search_space):
         is_changed = False
@@ -89,7 +94,7 @@ class LocalSearch:
 
         while jobs_to_move:
 
-            job_to_move = jobs_to_move.pop(0)  # TODO check for improvements - right now it pops the first/last element
+            job_to_move = [jobs_to_move.pop(0) for i in range(search_space)]  # TODO check for improvements - right now it pops the first/last element
             # print(job_to_move)
 
             available_machines = [i for i in range(machines_num)]
@@ -104,7 +109,7 @@ class LocalSearch:
 
                 destination_machine = available_machines[0]
 
-                if self._can_improve(max_machine, destination_machine, job_to_move):
+                if self._can_improve(max_machine, destination_machine, job_to_move, search_space):
 
                     self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], job_to_move)
                     self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], 0)
@@ -131,11 +136,16 @@ class LocalSearch:
 
         return is_changed
 
-    def _can_improve(self, max_machine, destination_machine, job_to_move):
+    def _can_improve(self, max_machine, destination_machine, job_to_move,search_space):
         self.temp_sum_pt = deepcopy(self.sum_pt)
-        self.temp_sum_pt[max_machine] -= job_to_move
-        self.temp_sum_pt[destination_machine] += job_to_move
+        #self.temp_sum_pt[max_machine] -= job_to_move
+        #self.temp_sum_pt[destination_machine] += job_to_move
         max_temp_sum_pt = max(self.temp_sum_pt)
+
+        self.temp_sum_pt[max_machine] = np.subtract(self.temp_sum_pt[max_machine], job_to_move)
+        print("temp_sum_pt@max_machine after substraction: ", self.temp_sum_pt[max_machine])
+        self.temp_sum_pt[destination_machine] = self.temp_sum_pt[destination_machine] + job_to_move
+        print("temp_sum_pt@madestination_machine after addition: ", self.temp_sum_pt[destination_machine])
 
         self.temp_squared_sum_pt = deepcopy(self.sum_squared_pt)
         self.temp_squared_sum_pt[max_machine] -= job_to_move ** 2
@@ -146,8 +156,6 @@ class LocalSearch:
         return max_temp_sum_pt < self.max_sum_pt or max_temp_squared_sum_pt < self.max_sum_squared_pt
 
 
-
-
 if __name__ == '__main__':
     process_time, machines_num = get_parameters()
 
@@ -155,6 +163,7 @@ if __name__ == '__main__':
     # print(machines)
     curr_state[0] = process_time
     # print(machines)
+
 
     local_searcher = LocalSearch(curr_state)
     local_searcher.search()

@@ -68,15 +68,15 @@ class LocalSearch:
         min_search_space = 2
         search_space = min_search_space
 
-        print(self.curr_state)
+        # print(self.curr_state)
         while search_space < self.max_search_space:
 
             is_changed = self._transfer_jobs(search_space)
-            print(self.curr_state)
             if not is_changed:
                 break
             else:
                 search_space = search_space + 2
+            print("State with search space {}: {}".format(search_space, self.curr_state))
 
     def _transfer_jobs(self, search_space):
         is_changed = False
@@ -162,4 +162,6 @@ if __name__ == '__main__':
     local_searcher = LocalSearch(curr_state)
     local_searcher.search()
 
-    print(local_searcher.curr_state)
+    print("\nFinal state:",local_searcher.curr_state)
+
+    print(local_searcher.sum_pt, local_searcher.sum_squared_pt)

@@ -54,7 +54,7 @@ from init_parameters import get_parameters
 
 
 class LocalSearch:
-    def __init__(self, state, search_space=1):
+    def __init__(self, state):
         self.curr_state = state
         self.sum_pt = np.array([sum(np.array(element)) for element in self.curr_state])
         self.sum_squared_pt = np.array([sum(np.array(element) ** 2) for element in self.curr_state])
@@ -62,26 +62,21 @@ class LocalSearch:
         self.max_sum_squared_pt = max(self.sum_squared_pt)
         self.temp_sum_pt = []
         self.temp_squared_sum_pt = []
-        self.search_space = search_space
+        self.max_search_space = len(self.curr_state[0]) - 1
 
     def search(self):
-        min_search_space = 1
+        min_search_space = 2
         search_space = min_search_space
-        max_search_space = len(self.curr_state[0]) - 1
 
         print(self.curr_state)
-        while search_space < max_search_space:
+        while search_space < self.max_search_space:
 
             is_changed = self._transfer_jobs(search_space)
             print(self.curr_state)
             if not is_changed:
-
-                search_space = search_space + 1
-                is_changed = self._transfer_jobs(search_space)
-                print(self.curr_state)
-                if not is_changed:
-                    break
-                    print("final answer: ", self.curr_state)
+                break
+            else:
+                search_space = search_space + 2
 
     def _transfer_jobs(self, search_space):
         is_changed = False
@@ -89,13 +84,18 @@ class LocalSearch:
         max_machine = np.argmax(self.sum_pt)  # TODO check if working
         # print("max machine = ", max_machine)
 
-        jobs_to_move = list(self.curr_state[max_machine])
-        # print("jobs to move = ", jobs_to_move)
+        available_jobs_to_move = list(self.curr_state[max_machine])
+        # print("jobs to move = ", available_jobs_to_move)
 
-        while jobs_to_move:
+        while available_jobs_to_move:
 
-            job_to_move = [jobs_to_move.pop(0) for i in range(search_space)]  # TODO check for improvements - right now it pops the first/last element
-            # print(job_to_move)
+            self.max_search_space = len(available_jobs_to_move)
+
+            if search_space < self.max_search_space:
+                jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(search_space)])  # TODO check for improvements - right now it pops the first/last element
+            else:
+                jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(self.max_search_space)])
+            # print(jobs_to_move)
 
             available_machines = [i for i in range(machines_num)]
 
@@ -109,10 +109,10 @@ class LocalSearch:
 
                 destination_machine = available_machines[0]
 
-                if self._can_improve(max_machine, destination_machine, job_to_move, search_space):
+                if self._can_improve(max_machine, destination_machine, jobs_to_move):
 
-                    self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], job_to_move)
-                    self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], 0)
+                    self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], jobs_to_move)
+                    self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], list(range(search_space)))
 
                     self.sum_pt = self.temp_sum_pt
                     self.max_sum_pt = max(self.sum_pt)
@@ -122,9 +122,9 @@ class LocalSearch:
 
                     max_machine = np.argmax(self.sum_pt)
 
-                    jobs_to_move = list(self.curr_state[max_machine])
+                    available_jobs_to_move = list(self.curr_state[max_machine])
 
-                    search_space = 1
+                    search_space = 2
 
                     is_changed = True
 
@@ -136,20 +136,15 @@ class LocalSearch:
 
         return is_changed
 
-    def _can_improve(self, max_machine, destination_machine, job_to_move,search_space):
+    def _can_improve(self, max_machine, destination_machine, job_to_move):
         self.temp_sum_pt = deepcopy(self.sum_pt)
-        #self.temp_sum_pt[max_machine] -= job_to_move
-        #self.temp_sum_pt[destination_machine] += job_to_move
+        self.temp_sum_pt[max_machine] -= sum(job_to_move)
+        self.temp_sum_pt[destination_machine] += sum(job_to_move)
         max_temp_sum_pt = max(self.temp_sum_pt)
 
-        self.temp_sum_pt[max_machine] = np.subtract(self.temp_sum_pt[max_machine], job_to_move)
-        print("temp_sum_pt@max_machine after substraction: ", self.temp_sum_pt[max_machine])
-        self.temp_sum_pt[destination_machine] = self.temp_sum_pt[destination_machine] + job_to_move
-        print("temp_sum_pt@madestination_machine after addition: ", self.temp_sum_pt[destination_machine])
-
         self.temp_squared_sum_pt = deepcopy(self.sum_squared_pt)
-        self.temp_squared_sum_pt[max_machine] -= job_to_move ** 2
-        self.temp_squared_sum_pt[destination_machine] += job_to_move ** 2
+        self.temp_squared_sum_pt[max_machine] -= sum(job_to_move ** 2)
+        self.temp_squared_sum_pt[destination_machine] += sum(job_to_move ** 2)
         max_temp_squared_sum_pt = max(self.temp_squared_sum_pt)
         # print("sum: ", max_temp_sum_pt, "Squared: ", max_temp_squared_sum_pt)
         # print("sum: ", self.temp_sum_pt, "Squared: ", self.temp_squared_sum_pt)
@@ -164,8 +159,7 @@ if __name__ == '__main__':
     curr_state[0] = process_time
     # print(machines)
 
-
     local_searcher = LocalSearch(curr_state)
     local_searcher.search()
 
-    # print(local_searcher.curr_state)
+    print(local_searcher.curr_state)

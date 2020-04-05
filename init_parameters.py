@@ -16,8 +16,8 @@ MIN_NUM_MACHINES = 2
 def get_parameters():
     while True:
         try:
-            machines_num = int(input("How many machines: "))  # TODO make sure valid (int, >= 2) input
-            if machines_num >= MIN_NUM_MACHINES:
+            number_of_machines = int(input("How many machines: "))  # TODO make sure valid (int, >= 2) input
+            if number_of_machines >= MIN_NUM_MACHINES:
                 break
             else:
                 raise ValueError
@@ -54,9 +54,9 @@ def get_parameters():
         except ValueError:
             print("Please print a value bigger than lower bound")
 
-    process_time = np.random.randint(lower_num, upper_num, jobs_num)
+    jobs_process_time = np.random.randint(lower_num, upper_num, jobs_num)
     print("Drawing job times...")
-    print("Job times: ", process_time)
-    print("Number of machines: ", machines_num)
-    return process_time, machines_num
+    print("Job times: ", jobs_process_time)
+    print("Number of machines: ", number_of_machines)
+    return jobs_process_time, number_of_machines
 

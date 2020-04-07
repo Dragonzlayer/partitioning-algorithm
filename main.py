@@ -105,65 +105,72 @@ class LocalSearch:
         is_changed = False
 
         # calculating index of max_machine and available_jobs_to_move from max_machine
-        max_machine = np.argmax(self.sum_processing_times)  # TODO check if working
+        value_max_machine = np.max(self.sum_processing_times)  # TODO check if working
+        max_machines = [index for index, value in enumerate(list(self.sum_processing_times)) if (value == value_max_machine)]
+        value_max_machine = np.max(self.sum_squared_processing_times)  # TODO check if working
+        max_machines += [index for index, value in enumerate(list(self.sum_squared_processing_times)) if (value == value_max_machine)]
 
+        while max_machines:
+            max_machine = max_machines.pop(0)
+            available_jobs_to_move = list(self.curr_state[max_machine])
 
-        available_jobs_to_move = list(self.curr_state[max_machine])
+            # with the given parameters, check every iteration if we can transfer jobs
+            while available_jobs_to_move:
 
-        # with the given parameters, check every iteration if we can transfer jobs
-        while available_jobs_to_move:
+                # calculating parameters for possible job transfer
+                self.max_search_space = len(available_jobs_to_move)
 
-            # calculating parameters for possible job transfer
-            self.max_search_space = len(available_jobs_to_move)
-
-            # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
-            if search_space < self.max_search_space:
-                jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(search_space)])  # TODO check for improvements - right now it pops the first/last element
-            else:
-                jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(self.max_search_space)])
-
-            # calculating indexes of available_machines , and then removes the index of max_machine from this list
-            available_machines = [i for i in range(number_of_machines)]
-
-            available_machines.pop(max_machine)
-
-            """
-            As long as available_machines is not empty, calculates possible destination_machine,
-            checks whether jobs transfer improves the state and if so - 
-            updates curr_state and resets search_space to 2 (minimum)
-            
-            if transferring jobs isn't doesn't improve state - try the next destination_machine
-            """
-            while available_machines:
-
-                destination_machine = available_machines[0]
-
-                if self._can_improve(max_machine, destination_machine, jobs_to_move):
-                    # Updates State
-                    self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], jobs_to_move)
-                    self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], list(range(search_space)))
-
-                    # updates objective / helper function values
-                    self.sum_processing_times = self.temp_sum_processing_times
-                    self.max_sum_processing_times = max(self.sum_processing_times)
-
-                    self.sum_squared_processing_times = self.temp_squared_sum_processing_times
-                    self.max_sum_squared_processing_times = max(self.sum_squared_processing_times)
-
-                    # Update next step
-                    max_machine = np.argmax(self.sum_processing_times)
-
-                    available_jobs_to_move = list(self.curr_state[max_machine])
-
-                    search_space = 2
-
-                    is_changed = True
-
-                    break
+                # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+                if search_space < self.max_search_space:
+                    jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(search_space)])  # TODO check for improvements - right now it pops the first/last element
                 else:
-                    available_machines.remove(destination_machine)
+                    jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(self.max_search_space)])
 
-                # print("current state: ", curr_state)
+                # calculating indexes of available_machines , and then removes the index of max_machine from this list
+                available_machines = [i for i in range(number_of_machines)]
+
+                available_machines.pop(max_machine)
+
+                """
+                As long as available_machines is not empty, calculates possible destination_machine,
+                checks whether jobs transfer improves the state and if so - 
+                updates curr_state and resets search_space to 2 (minimum)
+                
+                if transferring jobs isn't doesn't improve state - try the next destination_machine
+                """
+                while available_machines:
+
+                    destination_machine = available_machines[0]
+
+                    if self._can_improve(max_machine, destination_machine, jobs_to_move):
+                        # Updates State
+                        self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], jobs_to_move)
+                        self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], list(range(search_space)))
+
+                        # updates objective / helper function values
+                        self.sum_processing_times = self.temp_sum_processing_times
+                        self.max_sum_processing_times = max(self.sum_processing_times)
+
+                        self.sum_squared_processing_times = self.temp_squared_sum_processing_times
+                        self.max_sum_squared_processing_times = max(self.sum_squared_processing_times)
+
+                        # Update next step
+                        value_max_machine = np.max(self.sum_processing_times)  # TODO check if working
+                        max_machines = [index for index, value in enumerate(list(self.sum_processing_times)) if
+                                        (value == value_max_machine)]
+                        max_machine = max_machines.pop(0)
+
+                        available_jobs_to_move = list(self.curr_state[max_machine])
+
+                        search_space = 2
+
+                        is_changed = True
+
+                        break
+                    else:
+                        available_machines.remove(destination_machine)
+
+                    # print("current state: ", curr_state)
 
         return is_changed
 
@@ -198,7 +205,7 @@ class LocalSearch:
 
 
 if __name__ == '__main__':
-    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
+    # sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
     print("--------------- New Run --------------")
     # receive input from user and draw process times
     jobs_process_time, number_of_machines = get_parameters()

@@ -51,7 +51,7 @@ def transfer_jobs(curr_state, search_space):
 import numpy as np
 from copy import deepcopy
 from init_parameters import get_parameters
-
+import sys
 DEBUG = False  # Switch to True for prints during the run
 
 
@@ -88,7 +88,7 @@ class LocalSearch:
                 break
             else:
                 search_space = search_space + 2
-            print("State with search space {}: {}".format(search_space, self.curr_state))
+            # print("State with search space {}: {}".format(search_space, self.curr_state))
 
     def _transfer_jobs(self, search_space):
         """
@@ -106,6 +106,7 @@ class LocalSearch:
 
         # calculating index of max_machine and available_jobs_to_move from max_machine
         max_machine = np.argmax(self.sum_processing_times)  # TODO check if working
+
 
         available_jobs_to_move = list(self.curr_state[max_machine])
 
@@ -197,6 +198,8 @@ class LocalSearch:
 
 
 if __name__ == '__main__':
+    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
+    print("--------------- New Run --------------")
     # receive input from user and draw process times
     jobs_process_time, number_of_machines = get_parameters()
 
@@ -206,11 +209,11 @@ if __name__ == '__main__':
 
     # initialize LocalSearch class with initial state
     local_searcher = LocalSearch(initial_state)
-
+    print("Performing Local search...")
     # perform local search algorithm
     local_searcher.search()
 
-    print("\nFinal state:\n", local_searcher.curr_state)
+    print("Final state:\n", local_searcher.curr_state)
 
     print("Sum of process times for each machine: ", local_searcher.sum_processing_times)
     print("Squared sum of process times for each machine: ", local_searcher.sum_squared_processing_times)

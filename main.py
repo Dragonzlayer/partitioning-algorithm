@@ -48,6 +48,7 @@ def transfer_jobs(curr_state, search_space):
         
     return curr_state
 """
+import random
 import numpy as np
 from copy import deepcopy
 from init_parameters import get_parameters
@@ -62,12 +63,10 @@ class LocalSearch:
     def __init__(self, state):
 
         self.curr_state = state  # list of machine's indexes with their according jobs
-        self.sum_processing_times = np.array([sum(np.array(element)) for element in self.curr_state])
-        self.sum_squared_processing_times = np.array([sum(np.array(element) ** 2) for element in self.curr_state])
-        self.max_sum_processing_times = max(self.sum_processing_times)
-        self.max_sum_squared_processing_times = max(self.sum_squared_processing_times)
+        self.sum_processing_times_per_machine = np.array([sum(element.values()) for element in self.curr_state])
+        self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
+        self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
         self.temp_sum_processing_times = []
-        self.temp_squared_sum_processing_times = []
         self.max_search_space = len(self.curr_state[0]) - 1
 
     def search(self):
@@ -105,32 +104,34 @@ class LocalSearch:
         is_changed = False
 
         # calculating index of max_machine and available_jobs_to_move from max_machine
-        value_max_machine = np.max(self.sum_processing_times)  # TODO check if working
-        max_machines = [index for index, value in enumerate(list(self.sum_processing_times)) if (value == value_max_machine)]
-        value_max_machine = np.max(self.sum_squared_processing_times)  # TODO check if working
-        max_machines += [index for index, value in enumerate(list(self.sum_squared_processing_times)) if (value == value_max_machine)]
+        value_max_machine = np.max(self.sum_processing_times_per_machine)  # TODO check if working
+        max_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine)) if (value == value_max_machine)]
+        # value_max_machine = np.max(self.sum_squared_processing_times)  # TODO check if needed
+        # max_machines += [index for index, value in enumerate(list(self.sum_squared_processing_times)) if (value == value_max_machine)]
 
         while max_machines:
+            #TODO: check if to pop from first position or shuffle?
             max_machine = max_machines.pop(0)
-            available_jobs_to_move = list(self.curr_state[max_machine])
+            available_jobs_to_move = deepcopy(self.curr_state[max_machine])
 
             # with the given parameters, check every iteration if we can transfer jobs
             while available_jobs_to_move:
-
+                # random.shuffle(available_jobs_to_move)
                 # calculating parameters for possible job transfer
                 self.max_search_space = len(available_jobs_to_move)
 
                 # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
                 if search_space < self.max_search_space:
-                    jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(search_space)])  # TODO check for improvements - right now it pops the first/last element
+                    #TODO - check and maybe to pop a job in 'shuffle' manner?
+                    jobs_to_move = [available_jobs_to_move.popitem() for i in range(search_space)] # TODO check for improvements - right now it pops the first/last element
                 else:
-                    jobs_to_move = np.array([available_jobs_to_move.pop(0) for i in range(self.max_search_space)])
+                    jobs_to_move = [available_jobs_to_move.popitem() for i in range(self.max_search_space)]
 
                 # calculating indexes of available_machines , and then removes the index of max_machine from this list
                 available_machines = [i for i in range(number_of_machines)]
 
                 available_machines.pop(max_machine)
-
+                # random.shuffle(available_machines) # todo return if needed
                 """
                 As long as available_machines is not empty, calculates possible destination_machine,
                 checks whether jobs transfer improves the state and if so - 
@@ -140,27 +141,27 @@ class LocalSearch:
                 """
                 while available_machines:
 
+                    #TODO: why in the first position and not shuffle?
                     destination_machine = available_machines[0]
 
                     if self._can_improve(max_machine, destination_machine, jobs_to_move):
                         # Updates State
-                        self.curr_state[destination_machine] = np.append(self.curr_state[destination_machine], jobs_to_move)
-                        self.curr_state[max_machine] = np.delete(self.curr_state[max_machine], list(range(search_space)))
+                        for key, job in jobs_to_move:
+                            self.curr_state[destination_machine][key] = job
+                            del self.curr_state[max_machine][key]
 
                         # updates objective / helper function values
-                        self.sum_processing_times = self.temp_sum_processing_times
-                        self.max_sum_processing_times = max(self.sum_processing_times)
-
-                        self.sum_squared_processing_times = self.temp_squared_sum_processing_times
-                        self.max_sum_squared_processing_times = max(self.sum_squared_processing_times)
+                        self.sum_processing_times_per_machine = self.temp_sum_processing_times
+                        self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
+                        self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
 
                         # Update next step
-                        value_max_machine = np.max(self.sum_processing_times)  # TODO check if working
-                        max_machines = [index for index, value in enumerate(list(self.sum_processing_times)) if
+                        value_max_machine = np.max(self.sum_processing_times_per_machine)  # TODO check if working
+                        max_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine)) if
                                         (value == value_max_machine)]
                         max_machine = max_machines.pop(0)
 
-                        available_jobs_to_move = list(self.curr_state[max_machine])
+                        available_jobs_to_move = deepcopy(self.curr_state[max_machine])
 
                         search_space = 2
 
@@ -185,33 +186,35 @@ class LocalSearch:
         Returns: bool, true if transferring the jobs improves objective *or* helper functions, false otherwise
         """
 
+        sum_jobs_to_move = 0
+        for key, value in jobs_to_move:
+            sum_jobs_to_move += value
+
+
         # calculating objective function values given the jobs were transferred
-        self.temp_sum_processing_times = deepcopy(self.sum_processing_times)
-        self.temp_sum_processing_times[max_machine] -= sum(jobs_to_move)
-        self.temp_sum_processing_times[destination_machine] += sum(jobs_to_move)
+        self.temp_sum_processing_times = deepcopy(self.sum_processing_times_per_machine)
+        self.temp_sum_processing_times[max_machine] -= sum_jobs_to_move
+        self.temp_sum_processing_times[destination_machine] += sum_jobs_to_move
         max_temp_sum_pt = max(self.temp_sum_processing_times)
 
         # calculating helper function values given the jobs were transferred
-        self.temp_squared_sum_processing_times = deepcopy(self.sum_squared_processing_times)
-        self.temp_squared_sum_processing_times[max_machine] -= sum(jobs_to_move ** 2)
-        self.temp_squared_sum_processing_times[destination_machine] += sum(jobs_to_move ** 2)
-        max_temp_squared_sum_pt = max(self.temp_squared_sum_processing_times)
+        temp_squared_sum_pt = sum(self.temp_sum_processing_times ** 2)
 
-        if DEBUG:
-            print("sums: ", self.temp_sum_processing_times, "Squared Sums: ", self.temp_squared_sum_processing_times)
-            print("Max sum: ", max_temp_sum_pt, "Max Squared Sum: ", max_temp_squared_sum_pt)
+        # if DEBUG:
+            # print("sums: ", self.temp_sum_processing_times, "Squared Sums: ", self.temp_squared_sum_processing_times)
+            # print("Max sum: ", max_temp_sum_pt, "Max Squared Sum: ", max_temp_squared_sum_pt)
 
-        return max_temp_sum_pt < self.max_sum_processing_times or max_temp_squared_sum_pt < self.max_sum_squared_processing_times
+        return max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times
 
 
 if __name__ == '__main__':
-    # sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
+    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
     print("--------------- New Run --------------")
     # receive input from user and draw process times
     jobs_process_time, number_of_machines = get_parameters()
 
     # initializing: putting all jobs in the first machine
-    initial_state = [[] for machine in range(number_of_machines)]
+    initial_state = [{} for machine in range(number_of_machines)]
     initial_state[0] = jobs_process_time
 
     # initialize LocalSearch class with initial state
@@ -220,7 +223,11 @@ if __name__ == '__main__':
     # perform local search algorithm
     local_searcher.search()
 
-    print("Final state:\n", local_searcher.curr_state)
+    print("Final state:")
+    for i,k in enumerate(local_searcher.curr_state):
+        print("machine nr. ", i, ":", k)
 
-    print("Sum of process times for each machine: ", local_searcher.sum_processing_times)
+    print("Number of jobs for each machine: ")
+    print([len(item) for item in local_searcher.curr_state])
+    print("Sum of process times for each machine: ", local_searcher.sum_processing_times_per_machine)
     print("Squared sum of process times for each machine: ", local_searcher.sum_squared_processing_times)

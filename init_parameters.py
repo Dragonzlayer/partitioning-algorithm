@@ -7,7 +7,7 @@ From user:
 Then: draw processing time for each machine according to the lower and upper bounds given by the user and assign p.t for each job.
 """
 import numpy as np
-# np.random.seed(0)  # todo delete before submission
+#np.random.seed(0)  # todo delete before submission
 
 
 MIN_NUM_MACHINES = 2
@@ -59,8 +59,11 @@ def get_parameters():
             print("Please print a value bigger than lower bound")
 
     jobs_process_time = np.random.randint(lower_num, upper_num, jobs_num)
+    jobs_dict = {}
+    for i,job in enumerate(jobs_process_time):
+        jobs_dict[str(i)] = job
     print("Drawing job times...")
-    print("Job times: ", jobs_process_time)
+    print("Job times: ", jobs_dict)
     # print("Number of machines: ", number_of_machines)
-    return jobs_process_time, number_of_machines
+    return jobs_dict, number_of_machines
 

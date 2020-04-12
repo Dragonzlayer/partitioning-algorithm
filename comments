@@ -12,3 +12,5 @@ improvement can come from a machine that is not the first machine
 because currently we can only improve the first machine
 
 #TODO expand search space - move 2 jobs at a time and maintain an even numbers of jobs for every machine
+
+#TODO - add new documentation for dictionary

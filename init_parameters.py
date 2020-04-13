@@ -60,7 +60,7 @@ def get_parameters():
 
     jobs_process_time = np.random.randint(lower_num, upper_num, jobs_num)
     jobs_dict = {}
-    for i,job in enumerate(jobs_process_time):
+    for i, job in enumerate(jobs_process_time):
         jobs_dict[str(i)] = job
     print("Drawing job times...")
     print("Job times: ", jobs_dict)

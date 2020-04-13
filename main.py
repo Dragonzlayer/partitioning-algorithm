@@ -53,6 +53,7 @@ import numpy as np
 from copy import deepcopy
 from init_parameters import get_parameters
 import sys
+from itertools import combinations
 DEBUG = False  # Switch to True for prints during the run
 
 
@@ -64,8 +65,8 @@ class LocalSearch:
 
         self.curr_state = state  # list of machine's indexes with their according jobs
         self.sum_processing_times_per_machine = np.array([sum(element.values()) for element in self.curr_state])
-        self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
-        self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
+        self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)  # helper function value
+        self.max_sum_processing_times = max(self.sum_processing_times_per_machine)   # objective function value
         self.temp_sum_processing_times = []
         self.max_search_space = len(self.curr_state[0]) - 1
 
@@ -111,6 +112,7 @@ class LocalSearch:
 
         while max_machines:
             #TODO: check if to pop from first position or shuffle?
+            # TODO: calculate for every even combination of jobs!
             max_machine = max_machines.pop(0)
             available_jobs_to_move = deepcopy(self.curr_state[max_machine])
 
@@ -121,11 +123,33 @@ class LocalSearch:
                 self.max_search_space = len(available_jobs_to_move)
 
                 # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+
+                # creating list of indexes permutations of len(curr_search_space)
                 if search_space < self.max_search_space:
-                    #TODO - check and maybe to pop a job in 'shuffle' manner?
-                    jobs_to_move = [available_jobs_to_move.popitem() for i in range(search_space)] # TODO check for improvements - right now it pops the first/last element
+                    curr_search_space = search_space
                 else:
-                    jobs_to_move = [available_jobs_to_move.popitem() for i in range(self.max_search_space)]
+                    curr_search_space = self.max_search_space
+
+                 indexes_str = ''
+
+                for index,val in enumerate(available_jobs_to_move):
+                    indexes_str += str(index)
+
+                indexes_permutations = list(combinations(indexes_str, curr_search_space))
+
+
+
+
+
+                    #available_jobs_to_move is a dictionary
+                    #TODO: create a list of indexes - permutations in size search_space of elements->
+                    # (len(available_jobs_to_move) choose len(search_space))
+                   # for i in range(search_space):
+                    # jobs_to_move =
+
+                    #jobs_to_move = [available_jobs_to_move.popitem() for i in range(search_space)] # TODO check improvements - right now it pops the last element
+                #else:
+                    #jobs_to_move = [available_jobs_to_move.popitem() for i in range(self.max_search_space)]
 
                 # calculating indexes of available_machines , and then removes the index of max_machine from this list
                 available_machines = [i for i in range(number_of_machines)]
@@ -137,13 +161,14 @@ class LocalSearch:
                 checks whether jobs transfer improves the state and if so - 
                 updates curr_state and resets search_space to 2 (minimum)
                 
-                if transferring jobs isn't doesn't improve state - try the next destination_machine
+                if transferring jobs doesn't improve state - try the next destination_machine
                 """
                 while available_machines:
 
                     #TODO: why in the first position and not shuffle?
                     destination_machine = available_machines[0]
 
+                    # TODO: check all possibilities of jobs to transfer
                     if self._can_improve(max_machine, destination_machine, jobs_to_move):
                         # Updates State
                         for key, job in jobs_to_move:

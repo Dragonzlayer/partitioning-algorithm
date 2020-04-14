@@ -116,40 +116,26 @@ class LocalSearch:
             max_machine = max_machines.pop(0)
             available_jobs_to_move = deepcopy(self.curr_state[max_machine])
 
+            self.max_search_space = len(available_jobs_to_move)
+
+            # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+
+            # creating list of indexes permutations of len(curr_search_space)
+            if search_space < self.max_search_space:
+                curr_search_space = search_space
+            else:
+                curr_search_space = self.max_search_space
+
+            keys_combinations = list(combinations(available_jobs_to_move.keys(), curr_search_space))
+
             # with the given parameters, check every iteration if we can transfer jobs
-            while available_jobs_to_move:
-                # random.shuffle(available_jobs_to_move)
-                # calculating parameters for possible job transfer
-                self.max_search_space = len(available_jobs_to_move)
+            while keys_combinations:
 
-                # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
-
-                # creating list of indexes permutations of len(curr_search_space)
-                if search_space < self.max_search_space:
-                    curr_search_space = search_space
-                else:
-                    curr_search_space = self.max_search_space
-
-                 indexes_str = ''
-
-                for index,val in enumerate(available_jobs_to_move):
-                    indexes_str += str(index)
-
-                indexes_permutations = list(combinations(indexes_str, curr_search_space))
-
-
-
-
-
-                    #available_jobs_to_move is a dictionary
-                    #TODO: create a list of indexes - permutations in size search_space of elements->
-                    # (len(available_jobs_to_move) choose len(search_space))
-                   # for i in range(search_space):
-                    # jobs_to_move =
-
-                    #jobs_to_move = [available_jobs_to_move.popitem() for i in range(search_space)] # TODO check improvements - right now it pops the last element
-                #else:
-                    #jobs_to_move = [available_jobs_to_move.popitem() for i in range(self.max_search_space)]
+                jobs_to_move = []
+                key_comb = keys_combinations.pop()
+                for key in key_comb:
+                    value = available_jobs_to_move[key]
+                    jobs_to_move.append((key, value))
 
                 # calculating indexes of available_machines , and then removes the index of max_machine from this list
                 available_machines = [i for i in range(number_of_machines)]
@@ -188,7 +174,14 @@ class LocalSearch:
 
                         available_jobs_to_move = deepcopy(self.curr_state[max_machine])
 
-                        search_space = 2
+                        self.max_search_space = len(available_jobs_to_move)
+
+                        # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+
+                        # creating list of indexes permutations of len(curr_search_space)
+                        curr_search_space = 2
+
+                        keys_combinations = list(combinations(available_jobs_to_move.keys(), curr_search_space))
 
                         is_changed = True
 

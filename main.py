@@ -104,21 +104,18 @@ class LocalSearch:
         """
         is_changed = False
 
-        # calculating index of max_machine and available_jobs_to_move from max_machine
-        value_max_machine = np.max(self.sum_processing_times_per_machine)  # TODO check if working
-        max_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine)) if (value == value_max_machine)]
-        # value_max_machine = np.max(self.sum_squared_processing_times)  # TODO check if needed
-        # max_machines += [index for index, value in enumerate(list(self.sum_squared_processing_times)) if (value == value_max_machine)]
+        # calculating index of source_machine and available_jobs_to_move from source_machine
+        all_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine))]
 
-        while max_machines:
+        while all_machines:
             #TODO: check if to pop from first position or shuffle?
             # TODO: calculate for every even combination of jobs!
-            max_machine = max_machines.pop(0)
-            available_jobs_to_move = deepcopy(self.curr_state[max_machine])
+            source_machine = all_machines.pop(0)
+            available_jobs_to_move = deepcopy(self.curr_state[source_machine])
 
             self.max_search_space = len(available_jobs_to_move)
 
-            # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+            # moving available_jobs_to_move from current source_machine to jobs_to_move according to possible search_space
 
             # creating list of indexes permutations of len(curr_search_space)
             if search_space < self.max_search_space:
@@ -137,29 +134,29 @@ class LocalSearch:
                     value = available_jobs_to_move[key]
                     jobs_to_move.append((key, value))
 
-                # calculating indexes of available_machines , and then removes the index of max_machine from this list
+                # calculating indexes of available_machines , and then removes the index of source_machine from this list
                 available_machines = [i for i in range(number_of_machines)]
 
-                available_machines.pop(max_machine)
+                available_machines.pop(source_machine)
                 # random.shuffle(available_machines) # todo return if needed
                 """
-                As long as available_machines is not empty, calculates possible destination_machine,
+                As long as available_machines is not empty, calculates possible target_machine,
                 checks whether jobs transfer improves the state and if so - 
                 updates curr_state and resets search_space to 2 (minimum)
                 
-                if transferring jobs doesn't improve state - try the next destination_machine
+                if transferring jobs doesn't improve state - try the next target_machine
                 """
                 while available_machines:
 
                     #TODO: why in the first position and not shuffle?
-                    destination_machine = available_machines[0]
+                    target_machine = available_machines[0]
 
                     # TODO: check all possibilities of jobs to transfer
-                    if self._can_improve(max_machine, destination_machine, jobs_to_move):
+                    if self._can_improve(source_machine, target_machine, jobs_to_move):
                         # Updates State
                         for key, job in jobs_to_move:
-                            self.curr_state[destination_machine][key] = job
-                            del self.curr_state[max_machine][key]
+                            self.curr_state[target_machine][key] = job
+                            del self.curr_state[source_machine][key]
 
                         # updates objective / helper function values
                         self.sum_processing_times_per_machine = self.temp_sum_processing_times
@@ -167,16 +164,14 @@ class LocalSearch:
                         self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
 
                         # Update next step
-                        value_max_machine = np.max(self.sum_processing_times_per_machine)  # TODO check if working
-                        max_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine)) if
-                                        (value == value_max_machine)]
-                        max_machine = max_machines.pop(0)
+                        all_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine))]
+                        source_machine = all_machines.pop(0)
 
-                        available_jobs_to_move = deepcopy(self.curr_state[max_machine])
+                        available_jobs_to_move = deepcopy(self.curr_state[source_machine])
 
                         self.max_search_space = len(available_jobs_to_move)
 
-                        # moving available_jobs_to_move from current max_machine to jobs_to_move according to possible search_space
+                        # moving available_jobs_to_move from current source_machine to jobs_to_move according to possible search_space
 
                         # creating list of indexes permutations of len(curr_search_space)
                         curr_search_space = 2
@@ -187,7 +182,7 @@ class LocalSearch:
 
                         break
                     else:
-                        available_machines.remove(destination_machine)
+                        available_machines.remove(target_machine)
 
                     # print("current state: ", curr_state)
 

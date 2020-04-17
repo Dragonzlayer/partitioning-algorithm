@@ -7,7 +7,7 @@ From user:
 Then: draw processing time for each machine according to the lower and upper bounds given by the user and assign p.t for each job.
 """
 import numpy as np
-#np.random.seed(0)  # todo delete before submission
+np.random.seed(0)  # todo delete before submission
 
 
 MIN_NUM_MACHINES = 2

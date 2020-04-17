@@ -90,6 +90,133 @@ class LocalSearch:
                 search_space = search_space + 2
             # print("State with search space {}: {}".format(search_space, self.curr_state))
 
+        self._balance_jobs()
+
+    def _balance_jobs(self):
+        """
+        TODO: Add documentation
+        Returns:
+
+        """
+
+        # calculating index of source_machine and available_jobs_to_move_from_source from source_machine
+        all_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine))]
+
+        while all_machines:
+
+            source_machine = all_machines.pop(0)
+            available_jobs_to_move_from_source = deepcopy(self.curr_state[source_machine])
+
+            # creating list of indexes permutations of len(curr_search_space)
+
+            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1))
+
+            # with the given parameters, check every iteration if we can transfer jobs
+            while keys_combinations_from_source:
+
+                jobs_to_move_from_source = []
+                key_comb = keys_combinations_from_source.pop()
+                for key in key_comb:
+                    value = available_jobs_to_move_from_source[key]
+                    jobs_to_move_from_source.append((key, value))
+
+                # calculating indexes of available_machines , and then removes the index of source_machine from this list
+                available_machines = [i for i in range(number_of_machines)]
+
+                available_machines.pop(source_machine)
+                """
+                As long as available_machines is not empty, calculates possible target_machine,
+                checks whether jobs transfer improves the state and if so - 
+                updates curr_state and resets search_space to 2 (minimum)
+
+                if transferring jobs doesn't improve state - try the next target_machine
+                """
+                while available_machines:
+                    swapped = False
+                    target_machine = available_machines[0]
+                    available_jobs_to_move_from_target = deepcopy(self.curr_state[target_machine])
+                    # creating list of indexes permutations of len(curr_search_space)
+
+                    keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), 1))
+
+                    # with the given parameters, check every iteration if we can transfer jobs
+                    while keys_combinations_from_target:
+
+                        jobs_to_move_from_target = []
+                        key_comb = keys_combinations_from_target.pop()
+                        for key in key_comb:
+                            value = available_jobs_to_move_from_target[key]
+                            jobs_to_move_from_target.append((key, value))
+
+                        # TODO: check all possibilities of jobs to transfer
+                        if self._can_swap(source_machine, target_machine, jobs_to_move_from_source, jobs_to_move_from_target):
+                            # Updates State
+                            for key, job in jobs_to_move_from_source:
+                                self.curr_state[target_machine][key] = job
+                                del self.curr_state[source_machine][key]
+
+                            for key, job in jobs_to_move_from_target:
+                                self.curr_state[source_machine][key] = job
+                                del self.curr_state[target_machine][key]
+
+                            # updates objective / helper function values
+                            self.sum_processing_times_per_machine = self.temp_sum_processing_times
+                            self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
+                            self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
+
+                            # Update next step
+                            all_machines = [index for index, value in
+                                            enumerate(list(self.sum_processing_times_per_machine))]
+                            source_machine = all_machines.pop(0)
+
+                            available_jobs_to_move_from_source = deepcopy(self.curr_state[source_machine])
+                            available_jobs_to_move_from_target = deepcopy(self.curr_state[target_machine])
+
+                            # moving available_jobs_to_move_from_source from current source_machine to jobs_to_move according to possible search_space
+
+                            # creating list of indexes permutations of len(curr_search_space)
+                            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1))
+                            keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), 1))
+                            swapped = True
+                            break
+
+                    available_machines.remove(target_machine)
+                    if swapped:
+                        break
+
+    def _can_swap(self,source_machine, target_machine, jobs_to_move_from_source, jobs_to_move_from_target):
+        """
+             TODO: add documentation
+         Args:
+         """
+
+        sum_jobs_to_move_from_source = 0
+        for key, value in jobs_to_move_from_source:
+            sum_jobs_to_move_from_source += value
+
+        sum_jobs_to_move_from_target = 0
+        for key, value in jobs_to_move_from_target:
+            sum_jobs_to_move_from_target += value
+
+        # calculating objective function values given the jobs were transferred
+        self.temp_sum_processing_times = deepcopy(self.sum_processing_times_per_machine)
+
+        self.temp_sum_processing_times[source_machine] -= sum_jobs_to_move_from_source
+        self.temp_sum_processing_times[source_machine] += sum_jobs_to_move_from_target
+        self.temp_sum_processing_times[target_machine] -= sum_jobs_to_move_from_target
+        self.temp_sum_processing_times[target_machine] += sum_jobs_to_move_from_source
+
+        max_temp_sum_pt = max(self.temp_sum_processing_times)
+
+        # calculating helper function values given the jobs were transferred
+        temp_squared_sum_pt = sum(self.temp_sum_processing_times ** 2)
+
+        # if DEBUG:
+        # print("sums: ", self.temp_sum_processing_times, "Squared Sums: ", self.temp_squared_sum_processing_times)
+        # print("Max sum: ", max_temp_sum_pt, "Max Squared Sum: ", max_temp_squared_sum_pt)
+
+        return max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times
+
     def _transfer_jobs(self, search_space):
         """
             Transfer jobs such that at the end of the run the partition cannot be improved given search_space

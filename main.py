@@ -55,7 +55,7 @@ from init_parameters import get_parameters
 import sys
 from itertools import combinations
 DEBUG = False  # Switch to True for prints during the run
-
+from Timer import timer
 
 class LocalSearch:
     """
@@ -92,6 +92,7 @@ class LocalSearch:
 
         self._balance_jobs()
 
+    @timer
     def _balance_jobs(self):
         """
         TODO: Add documentation
@@ -217,6 +218,7 @@ class LocalSearch:
 
         return max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times
 
+    @timer
     def _transfer_jobs(self, search_space):
         """
             Transfer jobs such that at the end of the run the partition cannot be improved given search_space

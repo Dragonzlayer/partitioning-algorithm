@@ -94,10 +94,13 @@ class LocalSearch:
             else:
                 search_space = search_space + 2
             # print("State with search space {}: {}".format(search_space, self.curr_state))
-        self._balance_jobs()
+
+        self._balance_jobs(1, 1)
+        self._balance_jobs(1, 3)
+        self._balance_jobs(2, 2)
 
     @timer
-    def _balance_jobs(self):
+    def _balance_jobs(self, key_comb_from_source, key_comb_from_target):
         """
         TODO: Add documentation
         Returns:
@@ -114,7 +117,7 @@ class LocalSearch:
 
             # creating list of indexes permutations of len(curr_search_space)
 
-            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1)) # TODO: add documentation, why 1?
+            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), key_comb_from_source))
 
             # with the given parameters, check every iteration if we can transfer jobs
             while keys_combinations_from_source:
@@ -142,7 +145,7 @@ class LocalSearch:
                     available_jobs_to_move_from_target = self.curr_state[target_machine]
                     # creating list of indexes permutations of len(curr_search_space)
 
-                    keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), 1))
+                    keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(),key_comb_from_target ))
 
                     # with the given parameters, check every iteration if we can transfer jobs
                     while keys_combinations_from_target:
@@ -180,8 +183,8 @@ class LocalSearch:
                             # moving available_jobs_to_move_from_source from current source_machine to jobs_to_move according to possible search_space
 
                             # creating list of indexes permutations of len(curr_search_space)
-                            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1))
-                            keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), 1))
+                            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), key_comb_from_source))
+                            keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), key_comb_from_target))
                             swapped = True
                             break
 

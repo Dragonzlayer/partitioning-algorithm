@@ -84,12 +84,16 @@ class LocalSearch:
         while search_space < self.max_search_space:
 
             is_changed = self._transfer_jobs(search_space)
+            print("Number of jobs for each machine after transfrer jobs: ")
+            print([len(item) for item in local_searcher.curr_state])
+            print("Sum of process times for each machine: ", local_searcher.sum_processing_times_per_machine)
+            print("Squared sum of process times for each machine: ", local_searcher.sum_squared_processing_times)
+            break
             if not is_changed:
                 break
             else:
                 search_space = search_space + 2
             # print("State with search space {}: {}".format(search_space, self.curr_state))
-
         self._balance_jobs()
 
     @timer
@@ -101,16 +105,16 @@ class LocalSearch:
         """
 
         # calculating index of source_machine and available_jobs_to_move_from_source from source_machine
-        all_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine))]
+        all_machines = [index for index, _ in enumerate(list(self.sum_processing_times_per_machine))]
 
         while all_machines:
 
             source_machine = all_machines.pop(0)
-            available_jobs_to_move_from_source = deepcopy(self.curr_state[source_machine])
+            available_jobs_to_move_from_source = self.curr_state[source_machine]
 
             # creating list of indexes permutations of len(curr_search_space)
 
-            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1))
+            keys_combinations_from_source = list(combinations(available_jobs_to_move_from_source.keys(), 1)) # TODO: add documentation, why 1?
 
             # with the given parameters, check every iteration if we can transfer jobs
             while keys_combinations_from_source:
@@ -135,7 +139,7 @@ class LocalSearch:
                 while available_machines:
                     swapped = False
                     target_machine = available_machines[0]
-                    available_jobs_to_move_from_target = deepcopy(self.curr_state[target_machine])
+                    available_jobs_to_move_from_target = self.curr_state[target_machine]
                     # creating list of indexes permutations of len(curr_search_space)
 
                     keys_combinations_from_target = list(combinations(available_jobs_to_move_from_target.keys(), 1))
@@ -170,8 +174,8 @@ class LocalSearch:
                                             enumerate(list(self.sum_processing_times_per_machine))]
                             source_machine = all_machines.pop(0)
 
-                            available_jobs_to_move_from_source = deepcopy(self.curr_state[source_machine])
-                            available_jobs_to_move_from_target = deepcopy(self.curr_state[target_machine])
+                            available_jobs_to_move_from_source = self.curr_state[source_machine]
+                            available_jobs_to_move_from_target = self.curr_state[target_machine]
 
                             # moving available_jobs_to_move_from_source from current source_machine to jobs_to_move according to possible search_space
 
@@ -240,7 +244,7 @@ class LocalSearch:
             #TODO: check if to pop from first position or shuffle?
             # TODO: calculate for every even combination of jobs!
             source_machine = all_machines.pop(0)
-            available_jobs_to_move = deepcopy(self.curr_state[source_machine])
+            available_jobs_to_move = self.curr_state[source_machine]
 
             self.max_search_space = len(available_jobs_to_move)
 
@@ -296,7 +300,7 @@ class LocalSearch:
                         all_machines = [index for index, value in enumerate(list(self.sum_processing_times_per_machine))]
                         source_machine = all_machines.pop(0)
 
-                        available_jobs_to_move = deepcopy(self.curr_state[source_machine])
+                        available_jobs_to_move = self.curr_state[source_machine]
 
                         self.max_search_space = len(available_jobs_to_move)
 
@@ -351,6 +355,7 @@ class LocalSearch:
 
 if __name__ == '__main__':
     sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')
+    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output2.txt', mode='a')
     print("--------------- New Run --------------")
     # receive input from user and draw process times
     jobs_process_time, number_of_machines = get_parameters()

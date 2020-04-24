@@ -67,7 +67,6 @@ class LocalSearch:
         self.sum_processing_times_per_machine = np.array([sum(element.values()) for element in self.curr_state])
         self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)  # helper function value
         self.max_sum_processing_times = max(self.sum_processing_times_per_machine)   # objective function value
-        self.temp_sum_processing_times = []
         self.max_search_space = len(self.curr_state[0]) - 1
 
     def search(self):
@@ -95,9 +94,9 @@ class LocalSearch:
                 search_space = search_space + 2
             # print("State with search space {}: {}".format(search_space, self.curr_state))
 
-        self._balance_jobs(1, 1)
-        self._balance_jobs(1, 3)
-        self._balance_jobs(2, 2)
+        # self._balance_jobs(1, 1)
+        # self._balance_jobs(1, 3)
+        # self._balance_jobs(2, 2)
 
     @timer
     def _balance_jobs(self, key_comb_from_source, key_comb_from_target):
@@ -295,7 +294,7 @@ class LocalSearch:
                             del self.curr_state[source_machine][key]
 
                         # updates objective / helper function values
-                        self.sum_processing_times_per_machine = self.temp_sum_processing_times
+                        # self.sum_processing_times_per_machine = self.temp_sum_processing_times
                         self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
                         self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
 
@@ -339,22 +338,24 @@ class LocalSearch:
         for key, value in jobs_to_move:
             sum_jobs_to_move += value
 
-
         # calculating objective function values given the jobs were transferred
-        self.temp_sum_processing_times = deepcopy(self.sum_processing_times_per_machine)
-        self.temp_sum_processing_times[max_machine] -= sum_jobs_to_move
-        self.temp_sum_processing_times[destination_machine] += sum_jobs_to_move
-        max_temp_sum_pt = max(self.temp_sum_processing_times)
+        self.sum_processing_times_per_machine[max_machine] -= sum_jobs_to_move
+        self.sum_processing_times_per_machine[destination_machine] += sum_jobs_to_move
+
+        max_temp_sum_pt = max(self.sum_processing_times_per_machine)
 
         # calculating helper function values given the jobs were transferred
-        temp_squared_sum_pt = sum(self.temp_sum_processing_times ** 2)
+        temp_squared_sum_pt = sum(self.sum_processing_times_per_machine ** 2)
 
         # if DEBUG:
             # print("sums: ", self.temp_sum_processing_times, "Squared Sums: ", self.temp_squared_sum_processing_times)
             # print("Max sum: ", max_temp_sum_pt, "Max Squared Sum: ", max_temp_squared_sum_pt)
 
-        return max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times
-
+        if not (max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times):
+            self.sum_processing_times_per_machine[max_machine] += sum_jobs_to_move
+            self.sum_processing_times_per_machine[destination_machine] -= sum_jobs_to_move
+            return False
+        return True
 
 if __name__ == '__main__':
     sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\local-search_output\output.txt', mode='a')

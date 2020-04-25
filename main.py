@@ -94,9 +94,9 @@ class LocalSearch:
                 search_space = search_space + 2
             # print("State with search space {}: {}".format(search_space, self.curr_state))
 
-        # self._balance_jobs(1, 1)
-        # self._balance_jobs(1, 3)
-        # self._balance_jobs(2, 2)
+        self._balance_jobs(1, 1)
+        self._balance_jobs(1, 3)
+        self._balance_jobs(2, 2)
 
     @timer
     def _balance_jobs(self, key_comb_from_source, key_comb_from_target):
@@ -366,7 +366,18 @@ if __name__ == '__main__':
 
     # initializing: putting all jobs in the first machine
     initial_state = [{} for machine in range(number_of_machines)]
-    initial_state[0] = jobs_process_time
+
+
+    while jobs_process_time:
+        sum_processing_times_per_machine = np.array([sum(element.values()) for element in initial_state])
+        min_machine = np.argmin(sum_processing_times_per_machine)
+        job_id_1, job_val_1 = jobs_process_time.popitem()
+        job_id_2, job_val_2 = jobs_process_time.popitem()
+        initial_state[min_machine][job_id_1] = job_val_1
+        initial_state[min_machine][job_id_2] = job_val_2
+
+    for i,k in enumerate(initial_state):
+        print("machine nr. ", i, ":", k)
 
     # initialize LocalSearch class with initial state
     local_searcher = LocalSearch(initial_state)

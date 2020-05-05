@@ -112,7 +112,7 @@ class LocalSearch:
         Returns:
 
         """
-        self.counter = 0
+        #self.counter = 0
         # calculating index of source_machine and available_jobs_to_move_from_source from source_machine
         # all_machines = [index for index, _ in enumerate(list(self.sum_processing_times_per_machine))]
         all_machines = list(range(self.number_of_machines))
@@ -175,8 +175,8 @@ class LocalSearch:
 
                         # TODO: check all possibilities of jobs to transfer
                         sum_jobs_to_move = sum_jobs_to_move_from_target - sum_jobs_to_move_from_source
-                        if self.counter > 1000000:
-                            return
+                        #if self.counter > 1000000:
+                         #   return
 
                         if self._can_swap(source_machine, target_machine, sum_jobs_to_move):
                             # Updates State

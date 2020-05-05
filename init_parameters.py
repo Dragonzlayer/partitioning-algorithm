@@ -143,6 +143,10 @@ def get_parameters():
         for i in range(jobs_num):
             jobs_dict[str(i)] = jobs_process_time[i]
 
+    # 3 machines,
+    if CASE == 11:
+
+
 
     print("Drawing job times...")
     print("Job times: ", jobs_dict)

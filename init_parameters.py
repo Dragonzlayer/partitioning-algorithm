@@ -11,7 +11,7 @@ import numpy as np
 
 
 MIN_NUM_MACHINES = 2
-CASE = 10
+CASE = 14
 
 def get_parameters():
     while True:
@@ -143,8 +143,42 @@ def get_parameters():
         for i in range(jobs_num):
             jobs_dict[str(i)] = jobs_process_time[i]
 
-    # 3 machines,
+    # 3 Machines
     if CASE == 11:
+        for i in range(10):
+            jobs_dict[str(i)] = 2
+        for i in range(10, 20):
+            jobs_dict[str(i)] = 3
+        for i in range(20, 30):
+            jobs_dict[str(i)] = 4
+        for i in range(30, 114):
+            jobs_dict[str(i)] = 10
+        for i in range(114, 154):
+            jobs_dict[str(i)] = 21
+        for i in range(154, 184):
+            jobs_dict[str(i)] = 25
+
+    # 5 Machines
+    if CASE == 12:
+        for i in range(1, 101):
+            jobs_dict[str(i)] = i +100
+
+    # 4 Machines
+    if CASE == 13:
+        j = 11
+        for i in range(50):
+            jobs_dict[str(i)] = 2*i +j
+
+    # 2 Machines:
+    if CASE == 14:
+        for i in range(5):
+            jobs_dict[str(i)] = 10
+        for i in range(5, 9):
+            jobs_dict[str(i)] = 20
+        for i in range(9, 14):
+            jobs_dict[str(i)] = 30
+        for i in range(14, 24):
+            jobs_dict[str(i)] = 16
 
 
 

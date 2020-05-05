@@ -56,7 +56,7 @@ import sys
 from itertools import combinations
 
 DEBUG = False  # Switch to True for prints during the run
-from Timer import timer
+#from Timer import timer
 
 
 class LocalSearch:
@@ -387,6 +387,7 @@ if __name__ == '__main__':
     # initializing: putting all jobs in the first machine
     initial_state = [{} for machine in range(number_of_machines)]
 
+    # initializing step 2: performing version of LPT to distribute the jobs
     while jobs_process_time:
         sum_processing_times_per_machine = np.array([sum(element.values()) for element in initial_state])
         min_machine = np.argmin(sum_processing_times_per_machine)

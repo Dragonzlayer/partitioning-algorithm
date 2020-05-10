@@ -77,14 +77,13 @@ class LocalSearch:
     def search(self):
         """
         performing local search algorithm
-        partitions the input by calling self._transfer_jobs,
-        such that each machine (in self.curr_state) has an even number of jobs
-
+        Moving even number of jobs (starting from 2) as long as objective/helper functions values improve
+        After that trying to improve objective/helper functions values by switching jobs (first Trying to switch job-for job, when
+        it exhaust these options - increasing to trying to switch 2 jobs - for 2 jobs, and back to 1 for 1, etc.. (shown below)
         """
         min_search_space = 2
         search_space = min_search_space
 
-        # print(self.curr_state)
         while search_space < self.max_search_space:
 
             is_changed = self._transfer_jobs(search_space)
@@ -97,7 +96,6 @@ class LocalSearch:
                 break
             else:
                 search_space = search_space + 2
-            # print("State with search space {}: {}".format(search_space, self.curr_state))
 
         self._balance_jobs(1, 1)
         self._balance_jobs(1, 3)
@@ -105,28 +103,28 @@ class LocalSearch:
         self._balance_jobs(2, 2)
         self._balance_jobs(1, 1)
 
-    @timer
     def _balance_jobs(self, key_comb_from_source, key_comb_from_target):
         """
-        TODO: Add documentation
-        Returns:
+        Trying to improve objective/helper functions values by switching jobs from Machines.
+        At each Iteration, it select a 'Source machine' - A machine in which we are trying to switch jobs from, and an
+        available possible 'Target Machine' - A machine in which we will try to switch the job from the source machine.
+        It calculates possible permutations of jobs (size of sub-group given as an input) from source (and Target)
+        Machines and checking whether or not switching these jobs to permutation of jobs from target machine will
+        improve objective/helper functions values. Stops when exhausts the possibilities to switch jobs from possible
+        source and target machines (in the given size from the input)
 
         """
-        #self.counter = 0
-        # calculating index of source_machine and available_jobs_to_move_from_source from source_machine
-        # all_machines = [index for index, _ in enumerate(list(self.sum_processing_times_per_machine))]
         all_machines = list(range(self.number_of_machines))
         while all_machines:
 
             source_machine = all_machines.pop(0)
             available_jobs_to_move_from_source = self.curr_state[source_machine]
 
-            # creating list of indexes permutations of len(curr_search_space)
-
+            # creating list of indexes permutations of len(key_comb_from_source)
             keys_combinations_from_source = list(
                 combinations(available_jobs_to_move_from_source.keys(), key_comb_from_source))
 
-            # with the given parameters, check every iteration if we can transfer jobs
+            # with the given parameters, check every iteration if we can switch jobs
             while keys_combinations_from_source:
 
                 jobs_to_move_from_source = []
@@ -143,28 +141,23 @@ class LocalSearch:
                 available_machines.pop(source_machine)
                 """
                 As long as available_machines is not empty, calculates possible target_machine,
-                checks whether jobs transfer improves the state and if so - 
-                updates curr_state and resets search_space to 2 (minimum)
+                checks whether jobs switch improves the state and if so - 
+                updates curr_state 
 
-                if transferring jobs doesn't improve state - try the next target_machine
+                if switching jobs doesn't improve state - try the next target_machine
                 """
                 while available_machines:
                     swapped = False
                     target_machine = available_machines[0]
                     available_jobs_to_move_from_target = self.curr_state[target_machine]
-                    # creating list of indexes permutations of len(curr_search_space)
 
+                    # creating list of indexes permutations of len(curr_search_space)
                     keys_combinations_from_target = list(
                         combinations(available_jobs_to_move_from_target.keys(), key_comb_from_target))
 
                     # with the given parameters, check every iteration if we can transfer jobs
                     while keys_combinations_from_target:
 
-                        # jobs_to_move_from_target = []
-                        # key_comb = keys_combinations_from_target.pop()
-                        # for key in key_comb:
-                        #     value = available_jobs_to_move_from_target[key]
-                        #     jobs_to_move_from_target.append((key, value))
                         jobs_to_move_from_target = []
                         sum_jobs_to_move_from_target = 0
                         key_comb = keys_combinations_from_target.pop()
@@ -173,8 +166,8 @@ class LocalSearch:
                             sum_jobs_to_move_from_target += value
                             jobs_to_move_from_target.append((key, value))
 
-                        # TODO: check all possibilities of jobs to transfer
                         sum_jobs_to_move = sum_jobs_to_move_from_target - sum_jobs_to_move_from_source
+                        # TODO: decide what to do with counter
                         #if self.counter > 1000000:
                          #   return
 
@@ -189,9 +182,6 @@ class LocalSearch:
                                 del self.curr_state[target_machine][key]
 
                             # updates objective / helper function values
-                            # self.sum_processing_times_per_machine = self.temp_sum_processing_times
-                            # self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
-                            # self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
 
                             # Update next step
                             all_machines = list(range(self.number_of_machines))
@@ -200,9 +190,7 @@ class LocalSearch:
                             available_jobs_to_move_from_source = self.curr_state[source_machine]
                             available_jobs_to_move_from_target = self.curr_state[target_machine]
 
-                            # moving available_jobs_to_move_from_source from current source_machine to jobs_to_move according to possible search_space
-
-                            # creating list of indexes permutations of len(curr_search_space)
+                            # creating list of indexes permutations of jobs from source_machine and target_machine
                             keys_combinations_from_source = list(
                                 combinations(available_jobs_to_move_from_source.keys(), key_comb_from_source))
                             keys_combinations_from_target = list(
@@ -216,8 +204,17 @@ class LocalSearch:
 
     def _can_swap(self, source_machine, target_machine, sum_jobs_to_move):
         """
-             TODO: add documentation
+         utility function that calculates whether or not switching jobs
+         improves objective/helper functions.
+
          Args:
+             source_machine: the machine we're trying to switch jobs from
+             target_machine: the machine we're trying to switch jobs to
+             sum_jobs_to_move: sum_jobs_to_move_from_target - sum_jobs_to_move_from_source
+             the difference that we'll need to add/subtract to source/target machines
+
+         Returns:
+             bool, true - if switching these jobs will improve objective/helper function, False - otherwise
          """
         # calculating objective function values given the jobs were transferred
         self.counter += 1
@@ -241,7 +238,7 @@ class LocalSearch:
             self.sum_squared_processing_times = temp_squared_sum_pt
             return True
 
-    @timer
+    #@timer
     def _transfer_jobs(self, search_space):
         """
             Transfer jobs such that at the end of the run the partition cannot be improved given search_space
@@ -260,21 +257,17 @@ class LocalSearch:
         all_machines = list(range(self.number_of_machines))
 
         while all_machines:
-            # TODO: check if to pop from first position or shuffle?
-            # TODO: calculate for every even combination of jobs!
             source_machine = all_machines.pop(0)
             available_jobs_to_move = self.curr_state[source_machine]
 
             self.max_search_space = len(available_jobs_to_move)
 
-            # moving available_jobs_to_move from current source_machine to jobs_to_move according to possible search_space
-
-            # creating list of indexes permutations of len(curr_search_space)
             if search_space < self.max_search_space:
                 curr_search_space = search_space
             else:
                 curr_search_space = self.max_search_space
 
+            # creating list of indexes permutations of len(curr_search_space)
             keys_combinations = list(combinations(available_jobs_to_move.keys(), curr_search_space))
 
             # with the given parameters, check every iteration if we can transfer jobs
@@ -292,7 +285,6 @@ class LocalSearch:
                 available_machines = list(range(self.number_of_machines))
 
                 available_machines.pop(source_machine)
-                # random.shuffle(available_machines) # todo return if needed
                 """
                 As long as available_machines is not empty, calculates possible target_machine,
                 checks whether jobs transfer improves the state and if so - 
@@ -302,20 +294,14 @@ class LocalSearch:
                 """
                 while available_machines:
 
-                    # TODO: why in the first position and not shuffle?
                     target_machine = available_machines[0]
 
-                    # TODO: check all possibilities of jobs to transfer
+                    # checking whether a transfer will improve objective/helper functions
                     if self._can_improve(source_machine, target_machine, sum_jobs_to_move):
-                        # Updates State
+                        # If so - Updates State
                         for key, job in jobs_to_move:
                             self.curr_state[target_machine][key] = job
                             del self.curr_state[source_machine][key]
-
-                        # updates objective / helper function values
-                        # self.sum_processing_times_per_machine = self.temp_sum_processing_times
-                        # self.max_sum_processing_times = max(self.sum_processing_times_per_machine)
-                        # self.sum_squared_processing_times = sum(self.sum_processing_times_per_machine ** 2)
 
                         # Update next step
                         all_machines = list(range(self.number_of_machines))
@@ -325,11 +311,9 @@ class LocalSearch:
 
                         self.max_search_space = len(available_jobs_to_move)
 
-                        # moving available_jobs_to_move from current source_machine to jobs_to_move according to possible search_space
-
-                        # creating list of indexes permutations of len(curr_search_space)
                         curr_search_space = 2
 
+                        # creating list of indexes permutations of len(curr_search_space)
                         keys_combinations = list(combinations(available_jobs_to_move.keys(), curr_search_space))
 
                         is_changed = True
@@ -338,8 +322,6 @@ class LocalSearch:
                     else:
                         available_machines.remove(target_machine)
 
-                    # print("current state: ", curr_state)
-
         return is_changed
 
     def _can_improve(self, max_machine, destination_machine, sum_jobs_to_move):
@@ -347,7 +329,9 @@ class LocalSearch:
             deciding whether or not to transfer job according to objective and helper functions
         Args:
             max_machine: int, index of the machine with maximal jobs processing times
-            jobs_to_move: NumPy array, processing times of jobs from max_machine
+            sum_jobs_to_move: sum_jobs_to_move_from_target - sum_jobs_to_move_from_source
+            e.g, the difference between the jobs from both machines - if transfer is need
+            we'll add/subtract only this number and not re-calculate evreything
             destination_machine: index of machine to try to transfer jobs_to_move to
 
         Returns: bool, true if transferring the jobs improves objective *or* helper functions, false otherwise
@@ -362,16 +346,14 @@ class LocalSearch:
         # calculating helper function values given the jobs were transferred
         temp_squared_sum_pt = np.sum(self.sum_processing_times_per_machine ** 2)
 
-        # if DEBUG:
-        # print("sums: ", self.temp_sum_processing_times, "Squared Sums: ", self.temp_squared_sum_processing_times)
-        # print("Max sum: ", max_temp_sum_pt, "Max Squared Sum: ", max_temp_squared_sum_pt)
-
+        # if objective/helper functions doesn't improve -  revert state to state before the transfer try
         if not (
                 max_temp_sum_pt < self.max_sum_processing_times or temp_squared_sum_pt < self.sum_squared_processing_times):
             self.sum_processing_times_per_machine[max_machine] += sum_jobs_to_move
             self.sum_processing_times_per_machine[destination_machine] -= sum_jobs_to_move
             return False
         else:
+            # update objective/helper functions values and return true
             self.max_sum_processing_times = max_temp_sum_pt
             self.sum_squared_processing_times = temp_squared_sum_pt
             return True

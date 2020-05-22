@@ -1,0 +1,48 @@
+
+PseudoCode: version 1:
+
+The function receives:
+ 1: list of jobs process times: P = {p_1,p_2, ... , p_j}
+ 2: Number of identical Machines: {M_1, M_2,...M_d}
+
+The function returns:
+partition of the jobs s.t each machine has an even number of jobs
+if such partition doesn't exist - returns error
+
+Bounds calculations:
+
+    For the root:
+        Lower Bound: max{\upper_value{P\num_of_machines} , Sum_M_1, ... , Sum_M_d, Max_job}
+        Upper Bound: (Assuming the first job is assigned to the first machine) - max value of LPT* run
+
+    For a node in the tree:
+        Lower Bound: max{\upper_value{P\num_of_machines} ,Sum_M_1, ... , Sum_M_d}
+        upper bound: max value of LPT* run on the remaining jobs (that weren't assigned yet)
+
+* - the LPT run should return a legal partition - i.e: an even number of jobs to each machine.
+** - the LPT run for the root is the current "best partition"
+
+LPT:
+    input:
+        1: list of remaining jobs that weren't yet assigned - 'remaining_jobs'
+        2: list of machines with their current sums and number of jobs*
+
+        * - to help dictate to which machine to assign the job, particularly but not limited to 'break points'
+
+        Algo: (with the mentioned input)
+        # TODO: sort the input in non - decreasing order?
+        # TODO: assign LPT 'regularly' and in the end 'balance' it s.t it will have an even number of jobs?
+
+            For Max_job in remaining_jobs:
+
+
+
+
+
+# TODO: if there are fewer jobs than machines - to make an even partition and not use all machines or to send error?
+
+# TODO: LPT: to sort the jobs in non - decreasing order each calculation?
+
+# TODO:  LPT implementation - how to assign jobs in 'break points', what DAST is more suitable to store the parameters?
+
+

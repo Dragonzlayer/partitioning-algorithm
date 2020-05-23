@@ -2,11 +2,14 @@ from Timer import timer
 from copy import deepcopy
 from math import ceil
 import numpy as np
-
 nodes = 1
-number_of_jobs = 10
-number_of_machines = 3
+number_of_jobs = 10000
+number_of_machines = 4
 # TODO: fix upper bound calculation
+
+class NoValidState(Exception):
+   """Raised when the input value is too small"""
+   pass
 
 class B_B:
     def __init__(self, input_state):
@@ -18,16 +21,10 @@ class B_B:
         self.current_obj_func_value = 0
 
     def _update_state(self, state, i):
-        job_id, job_value = state['-1'].popitem()
-
-        state[str(i)].update({job_id: job_value})
-        return state
+        self.try_pop_and_move(state, source_machine=-1, destination_machine=i)
 
     def _undo_update(self, state, i):
-        job_id, job_value = state[str(i)].popitem()
-
-        state['-1'].update({job_id: job_value})
-        return state
+        self.try_pop_and_move(state, source_machine=i, destination_machine=-1 )
 
     @timer
     def DFS_wrapper(self):
@@ -35,7 +32,11 @@ class B_B:
         # the first upper bound is the trivial one - sum of all jobs
         input_state_copy = deepcopy(self.input_state)
         # Using _bounds_calc - creates the first leading partition and assigns the first objective function value
-        temp_lower, temp_upper, self.leading_partition = self._bounds_calc(input_state_copy)
+        try:
+            temp_lower, temp_upper, self.leading_partition = self._bounds_calc(input_state_copy)
+        except NoValidState:
+            print("Illegal input. No Valid State")
+            raise NoValidState
         #print("temp upper:", temp_upper, "temp lower:", temp_lower)
         lower = max(temp_lower, self.max_job)
         upper = ceil(sum(self.input_state['-1'].values()))
@@ -43,11 +44,11 @@ class B_B:
         print("initial bounds: Lower = ", lower, "upper:", upper)
 
         # First layer is symmetric - run on first machine and cont from there
-        state = self._update_state(self.input_state, 0)
+        self._update_state(self.input_state, 0)
 
         print("1st leading partition:", self.leading_partition)
 
-        self.DFS(state, 1)
+        self.DFS(self.input_state, 1)
 
     def DFS(self, input_state, level):
         print("Went down level")
@@ -59,9 +60,15 @@ class B_B:
         state = deepcopy(input_state)
 
         for i in range(self.number_of_machines):
-            state = self._update_state(state, i)
-            lower, upper, current_partition = self._bounds_calc(state)
             print(f"Checking out sibling {i=}")
+            self._update_state(state, i)
+            try:
+                lower, upper, current_partition = self._bounds_calc(state)
+            except NoValidState:
+                print("No valid State ")
+                self._undo_update(state, i)
+                continue
+
             print(f"{level=}, {state=}")
             print(f"{lower=}, {upper=}")
             global nodes
@@ -71,7 +78,7 @@ class B_B:
             # keep searching in his adjacent nodes (not in his subtree)
             if lower >= self.current_obj_func_value:
                 print(f"entered if clause with {i=}: {lower} >= {self.current_obj_func_value}")
-                state = self._undo_update(state, i)
+                self._undo_update(state, i)
                 continue
 
             # we've found a better solution - so:
@@ -88,62 +95,66 @@ class B_B:
             # keep searching in his adjacent nodes (not in his subtree)
             if lower == upper:
                 print(f"{lower=}=upper. {self.leading_partition=}")
-                state = self._undo_update(state, i)
+                self._undo_update(state, i)
                 continue
 
             # print(f"{self.leading_partition=}")
             self.DFS(state, level)
 
-            state = self._undo_update(state, i)
+            self._undo_update(state, i)
 
     def _bounds_calc(self, input_state):
         # calculates sum of jobs for each machine
-        sums = [0] * self.number_of_machines
-        for i in range(number_of_machines):
-            sums[i] = sum(input_state[str(i)].values())
+        sums = self.machines_sum(input_state)
 
         lower = max(self.basic_lower_bound, max(sums))
 
         temp_input_state = deepcopy(input_state)
 
-        upper, current_partition = self._LPT(temp_input_state)
-
+        try:
+            upper, current_partition = self._LPT(temp_input_state)
+        except NoValidState:
+            raise NoValidState
         return lower, upper, current_partition
 
     def _LPT(self, LPT_state):
         # balancing machines with odd number of jobs - s.t all machines now will have an even number of jobs
         for i in range(number_of_machines):
-                if len(LPT_state[str(i)]) % 2 != 0:
-                    # checking if there are still jobs to assign, if not - the partition is illegal
-                    if LPT_state['-1']:
-                        job_id, job_value = LPT_state['-1'].popitem()
-                        LPT_state[str(i)].update({job_id: job_value})
-                    # the partition is illegal
-                    else:
-                        print("illegal")
-                    # TODO: fix!
+            if len(LPT_state[str(i)]) % 2 != 0:
+                # checking if there are still jobs to assign, if not - the partition is illegal
+                if not self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=i):
+                # the partition is illegal
+                    raise NoValidState
 
-        sum_each_machine = [0] * self.number_of_machines
-        for i in range(number_of_machines):
-            sum_each_machine[i] = sum(LPT_state[str(i)].values())
+        while LPT_state['-1']:
 
-        while (LPT_state['-1']):
-
-            sum_each_machine = [0] * self.number_of_machines
-            for i in range(number_of_machines):
-                sum_each_machine[i] = sum(LPT_state[str(i)].values())
+            sum_each_machine = self.machines_sum(LPT_state)
             min_machine = np.argmin(sum_each_machine)
 
-            if LPT_state['-1']:
-                job_id_1, job_val_1 = LPT_state['-1'].popitem()
-                LPT_state[str(min_machine)].update({job_id_1: job_val_1})
-            if LPT_state['-1']:
-                job_id_2, job_val_2 = LPT_state['-1'].popitem()
-                LPT_state[str(min_machine)].update({job_id_2: job_val_2})
+            self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
+            self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
 
         print(f"{LPT_state=}")
+
+        sum_each_machine = self.machines_sum(LPT_state)
         upper = max(sum_each_machine)
         return upper, LPT_state
+
+    def machines_sum(self, state):
+        sum_each_machine = [0] * self.number_of_machines
+        for i in range(number_of_machines):
+            sum_each_machine[i] = sum(state[str(i)].values())
+
+        return sum_each_machine
+
+    def try_pop_and_move(self, state, source_machine, destination_machine):
+
+        if state[str(source_machine)]:
+            job_id, job_val = state[str(source_machine)].popitem()
+            state[str(destination_machine)].update({job_id: job_val})
+            return True
+        return False
+
 
 
 if __name__ == '__main__':
@@ -153,11 +164,12 @@ if __name__ == '__main__':
         dict[str(i)] = {}
     jobs_dict = {}
     for i in range(1, number_of_jobs + 1):
-        jobs_dict[str(i)] = i**2
+        jobs_dict[str(i)] = i
 
     dict['-1'] = jobs_dict
     B_B_RUN = B_B(dict)
 
     B_B_RUN.DFS_wrapper()
-    print(f"rendered {nodes=}")
-    print(f"{B_B_RUN.current_obj_func_value=}, Final state: {B_B_RUN.leading_partition}")
+    print(f"In total rendered {nodes=}")
+    sum_each_machine = B_B_RUN.machines_sum(B_B_RUN.leading_partition)
+    print(f"{sum_each_machine=}, {B_B_RUN.current_obj_func_value=}, Final state: {B_B_RUN.leading_partition}")

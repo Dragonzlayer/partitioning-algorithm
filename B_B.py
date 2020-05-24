@@ -4,7 +4,7 @@ from math import ceil
 import numpy as np
 nodes = 1
 number_of_jobs = 10000
-number_of_machines = 4
+number_of_machines =7
 # TODO: fix upper bound calculation
 
 class NoValidState(Exception):

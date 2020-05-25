@@ -2,6 +2,7 @@ from Timer import timer
 from copy import deepcopy
 from math import ceil
 import numpy as np
+from heapq import nsmallest
 import sys
 
 from init_parameters import get_parameters
@@ -23,6 +24,7 @@ class B_B:
         self.input_state = input_state
         self.leading_partition = {}
         self.current_obj_func_value = 0
+        self.all_jobs_sum = sum(input_state['-1'].values())
 
     def _update_state(self, state, i):
         self.try_pop_and_move(state, source_machine=-1, destination_machine=i)
@@ -77,8 +79,8 @@ class B_B:
             #print(f"{lower=}, {upper=}")
             global nodes
             nodes += 1
-            if nodes % 100 == 0:
-                print(nodes)
+            if nodes % 1000000 == 0:
+                 print(nodes)
 
             # truncate the node and don't create a subtree for it.
             # keep searching in his adjacent nodes (not in his subtree)
@@ -95,6 +97,7 @@ class B_B:
                 #print(f"{upper} < {self.current_obj_func_value}. {self.leading_partition=}")
                 self.leading_partition = current_partition
                 self.current_obj_func_value = upper
+                print(f"New {self.leading_partition=}")
 
 
             # truncate the node and don't create a subtree for it.
@@ -112,8 +115,18 @@ class B_B:
     def _bounds_calc(self, input_state):
         # calculates sum of jobs for each machine
         sums = self.machines_sum(input_state)
-
-        lower = max(self.basic_lower_bound, max(sums))
+        if self.number_of_machines == 3:
+            x=input_state['-1'].values()
+            if len(x)>1:
+                min_job1, min_job2 = nsmallest(2, x)
+            else:
+                min_job1 = 0
+                min_job2 = 0
+            Arbitrary_sum = sums[0]
+            special_case_lower = min(Arbitrary_sum+min_job1+min_job2, ceil((self.all_jobs_sum - Arbitrary_sum)/2))
+            lower = max(self.basic_lower_bound, max(sums), special_case_lower)
+        else:
+            lower = max(self.basic_lower_bound, max(sums))
 
         temp_input_state = deepcopy(input_state)
 
@@ -140,7 +153,7 @@ class B_B:
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
 
-        print(f"{LPT_state=}")
+        # print(f"{LPT_state=}")
 
         sum_each_machine = self.machines_sum(LPT_state)
         upper = max(sum_each_machine)
@@ -161,32 +174,85 @@ class B_B:
             return True
         return False
 
+def second_smallest(numbers):
+    return nsmallest(2, numbers)[-1]
 
-
-if __name__ == '__main__':
-    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\output8.txt', mode='a')
+def run_with_params(dict_param_num):
     print("--------------- New Run --------------")
-    num_cases = 14
-    #for case_num in range(1, 2):
-    #jobs_dict, number_of_machines = get_parameters(13)
 
-    jobs_dict = {}
-    #jobs_dict = {'0': 11, '1': 13, '2': 15, '3': 17, '4': 19, '5': 21, '6': 23, '7': 25, '8': 27, '9': 29, '10': 31, '11': 33, '12': 35, '13': 37, '14': 39, '15': 41, '16': 43, '17': 45, '18': 47, '19': 49, '20': 51, '21': 53, '22': 55, '23': 57, '24': 59, '25': 61, '26': 63, '27': 65, '28': 67, '29': 69, '30': 71, '31': 73, '32': 75, '33': 77, '34': 79, '35': 81, '36': 83, '37': 85, '38': 87, '39': 89, '40': 91, '41': 93, '42': 95, '43': 97, '44': 99, '45': 101, '46': 103, '47': 105, '48': 107, '49': 109}
-    dict = {}
-    for i in range(number_of_machines):
-        dict[str(i)] = {}
-
-    for i in range(15):
-        jobs_dict[str(i)] = 60
-    dict['-1'] = jobs_dict
-    B_B_RUN = B_B(dict)
+    B_B_RUN = B_B(dict_param_num)
 
     B_B_RUN.DFS_wrapper()
     print(f"In total rendered {nodes=}")
     sum_each_machine = B_B_RUN.machines_sum(B_B_RUN.leading_partition)
     print("Number of jobs for each machine: ")
-    x= [len(item) for item in B_B_RUN.leading_partition.values()]
+    x = [len(item) for item in B_B_RUN.leading_partition.values()]
     print(x[:-1])
     print(f"{sum_each_machine=}, {B_B_RUN.current_obj_func_value=}, Final state: {B_B_RUN.leading_partition}")
+
+
+def create_dict(case_id):
+    #for case_num in range(1, 2):
+    #jobs_dict, number_of_machines = get_parameters(13)
+
+    jobs_dict = {}
+    dict = {}
+    if case_id == '3_14_60':
+        number_of_machines = 3
+        number_of_jobs = 14
+        job_time = 60
+
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(1,number_of_jobs+1):
+            jobs_dict[str(i)] = job_time
+        dict['-1'] = jobs_dict
+
+    if case_id == '3_16_60':
+        number_of_machines = 3
+        number_of_jobs = 16
+        job_time = 60
+
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(1,number_of_jobs+1):
+            jobs_dict[str(i)] = job_time
+        dict['-1'] = jobs_dict
+
+    if case_id == '3_20_60':
+        number_of_machines = 3
+        number_of_jobs = 20
+        job_time = 60
+
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(1,number_of_jobs+1):
+            jobs_dict[str(i)] = job_time
+        dict['-1'] = jobs_dict
+
+    if case_id == '123':
+        number_of_machines = 3
+        number_of_jobs = 10000
+
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(1,number_of_jobs+1):
+            jobs_dict[str(i)] = i
+        dict['-1'] = jobs_dict
+
+    return dict
+
+
+if __name__ == '__main__':
+    # sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\out1.txt', mode='a')
+
+    for version_id in ["123", "3_14_60", "3_16_60", "3_20_60"]:
+
+        dict1 = create_dict(version_id)
+        run_with_params(dict1)
 
 

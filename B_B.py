@@ -9,7 +9,7 @@ from init_parameters import get_parameters
 
 nodes = 1
 # number_of_jobs = 10
-number_of_machines = 3
+number_of_machines = 2
 # TODO: fix upper bound calculation
 
 class NoValidState(Exception):
@@ -44,10 +44,16 @@ class B_B:
             print("Illegal input. No Valid State")
             raise NoValidState
         #print("temp upper:", temp_upper, "temp lower:", temp_lower)
-        lower = max(temp_lower, self.max_job)
+
+        number_of_jobs = len(self.input_state['-1'].values())
+        lcm_val = np.lcm(2, self.number_of_machines)
+        num_jobs_for_min = number_of_jobs + lcm_val - number_of_jobs % lcm_val
+        new_lower = min(self.input_state['-1'].values()) * num_jobs_for_min/self.number_of_machines
+        self.basic_lower_bound = max(temp_lower, self.max_job, new_lower)
+
         upper = ceil(sum(self.input_state['-1'].values()))
         self.current_obj_func_value = upper
-        print("initial bounds: Lower = ", lower, "upper:", upper)
+        print("initial bounds: Lower = ", self.basic_lower_bound, "upper:", upper)
 
         # First layer is symmetric - run on first machine and cont from there
         self._update_state(self.input_state, 0)
@@ -79,7 +85,7 @@ class B_B:
             #print(f"{lower=}, {upper=}")
             global nodes
             nodes += 1
-            if nodes % 1000000 == 0:
+            if nodes % 10000 == 0:
                  print(nodes)
 
             # truncate the node and don't create a subtree for it.
@@ -234,8 +240,8 @@ def create_dict(case_id):
         dict['-1'] = jobs_dict
 
     if case_id == '123':
-        number_of_machines = 3
-        number_of_jobs = 10000
+        number_of_machines = 2
+        number_of_jobs = 10
 
         for i in range(number_of_machines):
             dict[str(i)] = {}
@@ -250,7 +256,7 @@ def create_dict(case_id):
 if __name__ == '__main__':
     # sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\out1.txt', mode='a')
 
-    for version_id in ["123", "3_14_60", "3_16_60", "3_20_60"]:
+    for version_id in [ "123", "3_14_60", "3_16_60", "3_20_60"]:
 
         dict1 = create_dict(version_id)
         run_with_params(dict1)

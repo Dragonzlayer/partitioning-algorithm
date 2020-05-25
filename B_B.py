@@ -8,7 +8,7 @@ from init_parameters import get_parameters
 
 nodes = 1
 # number_of_jobs = 10
-number_of_machines = 4
+number_of_machines = 3
 # TODO: fix upper bound calculation
 
 class NoValidState(Exception):
@@ -140,7 +140,7 @@ class B_B:
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
 
-        #print(f"{LPT_state=}")
+        print(f"{LPT_state=}")
 
         sum_each_machine = self.machines_sum(LPT_state)
         upper = max(sum_each_machine)
@@ -164,16 +164,20 @@ class B_B:
 
 
 if __name__ == '__main__':
-    #sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\output7.txt', mode='a')
+    sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\output8.txt', mode='a')
     print("--------------- New Run --------------")
     num_cases = 14
     #for case_num in range(1, 2):
-    jobs_dict, number_of_machines = get_parameters(13)
+    #jobs_dict, number_of_machines = get_parameters(13)
 
+    jobs_dict = {}
     #jobs_dict = {'0': 11, '1': 13, '2': 15, '3': 17, '4': 19, '5': 21, '6': 23, '7': 25, '8': 27, '9': 29, '10': 31, '11': 33, '12': 35, '13': 37, '14': 39, '15': 41, '16': 43, '17': 45, '18': 47, '19': 49, '20': 51, '21': 53, '22': 55, '23': 57, '24': 59, '25': 61, '26': 63, '27': 65, '28': 67, '29': 69, '30': 71, '31': 73, '32': 75, '33': 77, '34': 79, '35': 81, '36': 83, '37': 85, '38': 87, '39': 89, '40': 91, '41': 93, '42': 95, '43': 97, '44': 99, '45': 101, '46': 103, '47': 105, '48': 107, '49': 109}
     dict = {}
     for i in range(number_of_machines):
         dict[str(i)] = {}
+
+    for i in range(15):
+        jobs_dict[str(i)] = 60
     dict['-1'] = jobs_dict
     B_B_RUN = B_B(dict)
 

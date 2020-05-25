@@ -11,9 +11,8 @@ import numpy as np
 
 
 MIN_NUM_MACHINES = 2
-CASE = 14
 
-def get_parameters():
+def get_parameters(CASE):
     while True:
         try:
             number_of_machines = int(input("Number of machines: "))  # TODO make sure valid (int, >= 2) input
@@ -75,7 +74,7 @@ def get_parameters():
 
     jobs_dict = {}
     if CASE == 1:
-        for i in range(1, 101):
+        for i in range(1, 11):
             jobs_dict[str(i)] = i
 
     if CASE == 2:

@@ -84,7 +84,7 @@ def main():
                       mode='a')
     print("--------------- New Run --------------")
     # receive input from user and draw process times
-    jobs_process_time, number_of_machines = get_parameters()
+    jobs_process_time, number_of_machines = get_parameters(CASE=1)
 
     # initializing: putting all jobs in the first machine
     initial_state = [{} for machine in range(number_of_machines)]

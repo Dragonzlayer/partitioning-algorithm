@@ -1,20 +1,31 @@
-import random
-import numpy as np
-from copy import deepcopy
-from init_parameters import get_parameters
-import sys
 from itertools import combinations
 
+import numpy as np
+
 DEBUG = False  # Switch to True for prints during the run
-#from Timer import timer
+FULL_MODE = True  # If false caps run after 10M iterations
+
+# from Timer import timer
 
 
 class LocalSearch:
-    """
-
-    """
 
     def __init__(self, state):
+        """
+        Full Implementation of Local Search Algorithm as defined
+
+        Example Usage:
+            local_searcher = LocalSearch(state)
+            local_searcher.search()
+
+        Results can be found at:
+            local_searcher.curr_state
+            local_searcher.sum_processing_times_per_machine
+            local_searcher.sum_squared_processing_times
+
+        Args:
+            state: list of dictionaries of machine's indexes with their according jobs (job_id : job_val)
+        """
 
         self.curr_state = state  # list of machine's indexes with their according jobs
         self.sum_processing_times_per_machine = np.array([sum(element.values()) for element in self.curr_state])
@@ -23,6 +34,8 @@ class LocalSearch:
         self.max_search_space = len(self.curr_state[0]) - 1
         self.number_of_machines = len(self.curr_state)
         self.counter = 0
+        self.jobs_per_balance = [[1, 1], [1, 3], [1, 1], [2, 2], [1, 1]]
+        self.cap = 1000000
 
     def search(self):
         """
@@ -31,26 +44,10 @@ class LocalSearch:
         After that trying to improve objective/helper functions values by switching jobs (first Trying to switch job-for job, when
         it exhaust these options - increasing to trying to switch 2 jobs - for 2 jobs, and back to 1 for 1, etc.. (shown below)
         """
-        min_search_space = 2
-        search_space = min_search_space
+        self._transfer_jobs(search_space=2)
 
-        while search_space < self.max_search_space:
-
-            # TODO: check if needed
-            # Checks if transfer_jobs improve objective/helper functions-
-            # if
-            is_changed = self._transfer_jobs(search_space)
-            break
-            if not is_changed:
-                break
-            else:
-                search_space = search_space + 2
-
-        self._balance_jobs(1, 1)
-        self._balance_jobs(1, 3)
-        self._balance_jobs(1, 1)
-        self._balance_jobs(2, 2)
-        self._balance_jobs(1, 1)
+        for jobs_from_source, jobs_from_target in self.jobs_per_balance:
+            self._balance_jobs(key_comb_from_source=jobs_from_source, key_comb_from_target=jobs_from_target)
 
     def _balance_jobs(self, key_comb_from_source, key_comb_from_target):
         """
@@ -131,9 +128,11 @@ class LocalSearch:
                             jobs_to_move_from_target.append((key, value))
 
                         sum_jobs_to_move = sum_jobs_to_move_from_target - sum_jobs_to_move_from_source
-                        # TODO: decide what to do with counter
-                        # if self.counter > 1000000:
-                        #   return
+
+                        # for extremely large input, cap the number of iterations, as there is no further improvement.
+                        if not FULL_MODE:
+                            if self.counter > self.cap:
+                              return
 
                         if self._can_swap(source_machine, target_machine, sum_jobs_to_move):
                             # Updates State
@@ -179,7 +178,6 @@ class LocalSearch:
              bool, true - if switching these jobs will improve objective/helper function, False - otherwise
          """
         # calculating objective function values given the jobs were transferred
-        # TODO: check about the counter YO
         self.counter += 1
 
         self.sum_processing_times_per_machine[source_machine] += sum_jobs_to_move
@@ -202,7 +200,7 @@ class LocalSearch:
             self.sum_squared_processing_times = temp_squared_sum_pt
             return True
 
-    # @timer TODO: check timer YO
+    # @timer
     def _transfer_jobs(self, search_space):
         """
             Transfer jobs such that at the end of the run the partition cannot be improved given search_space

@@ -1,0 +1,539 @@
+
+*********************************************** New Run ***********************************************
+Number of machines:  3
+Total number of jobs: 14
+initial bounds [Lower, Upper]: [360, 840]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[360, 240, 240]
+Number of jobs:  [6, 4, 4]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=4
+sum_each_machine=[360, 240, 240]
+Number of jobs for each machine:
+[6, 4, 4]
+Objective function value: 360
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  3
+Total number of jobs: 16
+initial bounds [Lower, Upper]: [360, 960]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[360, 360, 240]
+Number of jobs:  [6, 6, 4]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=7
+sum_each_machine=[360, 360, 240]
+Number of jobs for each machine:
+[6, 6, 4]
+Objective function value: 360
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  3
+Total number of jobs: 20
+initial bounds [Lower, Upper]: [480, 1200]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[480, 360, 360]
+Number of jobs:  [8, 6, 6]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=10
+sum_each_machine=[480, 360, 360]
+Number of jobs for each machine:
+[8, 6, 6]
+Objective function value: 480
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  2
+Total number of jobs: 12
+initial bounds [Lower, Upper]: [50, 99]
+First partition:
+Machine 0  jobs: [33, 11, 4, 3]
+Machine 1  jobs: [10, 9, 8, 7, 6, 5, 2, 1]
+--------------------- new leading partition ---------------------
+sum_each_machine=[51, 48]
+Number of jobs:  [4, 8]
+Machine 0  jobs: [33, 11, 4, 3]
+Machine 1  jobs: [10, 9, 8, 7, 6, 5, 2, 1]
+--------------------- new leading partition ---------------------
+sum_each_machine=[50, 49]
+Number of jobs:  [4, 8]
+Machine 0  jobs: [33, 11, 5, 1]
+Machine 1  jobs: [10, 9, 8, 7, 6, 4, 3, 2]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=39
+sum_each_machine=[50, 49]
+Number of jobs for each machine:
+[4, 8]
+Objective function value: 50
+Machine 0  jobs: [33, 11, 5, 1]
+Machine 1  jobs: [10, 9, 8, 7, 6, 4, 3, 2]
+*********************************************** New Run ***********************************************
+Number of machines:  4
+Total number of jobs: 8
+initial bounds [Lower, Upper]: [6, 24]
+First partition:
+Machine 0  jobs: [4, 4]
+Machine 1  jobs: [3, 3]
+Machine 2  jobs: [3, 3]
+Machine 3  jobs: [2, 2]
+--------------------- new leading partition ---------------------
+sum_each_machine=[8, 6, 6, 4]
+Number of jobs:  [2, 2, 2, 2]
+Machine 0  jobs: [4, 4]
+Machine 1  jobs: [3, 3]
+Machine 2  jobs: [3, 3]
+Machine 3  jobs: [2, 2]
+--------------------- new leading partition ---------------------
+sum_each_machine=[7, 7, 6, 4]
+Number of jobs:  [2, 2, 2, 2]
+Machine 0  jobs: [4, 3]
+Machine 1  jobs: [4, 3]
+Machine 2  jobs: [3, 3]
+Machine 3  jobs: [2, 2]
+--------------------- new leading partition ---------------------
+sum_each_machine=[6, 6, 6, 6]
+Number of jobs:  [2, 2, 2, 2]
+Machine 0  jobs: [4, 2]
+Machine 1  jobs: [4, 2]
+Machine 2  jobs: [3, 3]
+Machine 3  jobs: [3, 3]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=58
+sum_each_machine=[6, 6, 6, 6]
+Number of jobs for each machine:
+[2, 2, 2, 2]
+Objective function value: 6
+Machine 0  jobs: [4, 2]
+Machine 1  jobs: [4, 2]
+Machine 2  jobs: [3, 3]
+Machine 3  jobs: [3, 3]
+*********************************************** New Run ***********************************************
+Number of machines:  4
+Total number of jobs: 14
+initial bounds [Lower, Upper]: [12, 48]
+First partition:
+Machine 0  jobs: [4, 4, 3, 3]
+Machine 1  jobs: [4, 4, 3, 3]
+Machine 2  jobs: [4, 4]
+Machine 3  jobs: [3, 3, 3, 3]
+--------------------- new leading partition ---------------------
+sum_each_machine=[14, 14, 8, 12]
+Number of jobs:  [4, 4, 2, 4]
+Machine 0  jobs: [4, 4, 3, 3]
+Machine 1  jobs: [4, 4, 3, 3]
+Machine 2  jobs: [4, 4]
+Machine 3  jobs: [3, 3, 3, 3]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575694
+sum_each_machine=[14, 14, 8, 12]
+Number of jobs for each machine:
+[4, 4, 2, 4]
+Objective function value: 14
+Machine 0  jobs: [4, 4, 3, 3]
+Machine 1  jobs: [4, 4, 3, 3]
+Machine 2  jobs: [4, 4]
+Machine 3  jobs: [3, 3, 3, 3]
+*********************************************** New Run ***********************************************
+Number of machines:  3
+Total number of jobs: 184
+initial bounds [Lower, Upper]: [840, 2520]
+First partition:
+Machine 0  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2]
+Machine 1  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2]
+Machine 2  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 3, 3, 3, 3, 2, 2]
+--------------------- new leading partition ---------------------
+sum_each_machine=[842, 840, 838]
+Number of jobs:  [62, 62, 60]
+Machine 0  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2]
+Machine 1  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2]
+Machine 2  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 3, 3, 3, 3, 2, 2]
+--------------------- new leading partition ---------------------
+sum_each_machine=[840, 840, 840]
+Number of jobs:  [62, 62, 60]
+Machine 0  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2]
+Machine 1  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2]
+Machine 2  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 3, 3, 3, 3, 2, 2]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575724
+sum_each_machine=[840, 840, 840]
+Number of jobs for each machine:
+[62, 62, 60]
+Objective function value: 840
+Machine 0  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 2, 2, 2, 2]
+Machine 1  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2]
+Machine 2  jobs: [25, 25, 25, 25, 25, 25, 25, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 4, 4, 3, 3, 3, 3, 2, 2]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 100
+initial bounds [Lower, Upper]: [3010, 15050]
+First partition:
+Machine 0  jobs: [200, 199, 182, 181, 180, 179, 162, 161, 160, 159, 142, 141, 140, 139, 122, 121, 120, 119, 102, 101]
+Machine 1  jobs: [198, 197, 184, 183, 178, 177, 164, 163, 158, 157, 144, 143, 138, 137, 124, 123, 118, 117, 104, 103]
+Machine 2  jobs: [196, 195, 186, 185, 176, 175, 166, 165, 156, 155, 146, 145, 136, 135, 126, 125, 116, 115, 106, 105]
+Machine 3  jobs: [194, 193, 188, 187, 174, 173, 168, 167, 154, 153, 148, 147, 134, 133, 128, 127, 114, 113, 108, 107]
+Machine 4  jobs: [192, 191, 190, 189, 172, 171, 170, 169, 152, 151, 150, 149, 132, 131, 130, 129, 112, 111, 110, 109]
+--------------------- new leading partition ---------------------
+sum_each_machine=[3010, 3010, 3010, 3010, 3010]
+Number of jobs:  [20, 20, 20, 20, 20]
+Machine 0  jobs: [200, 199, 182, 181, 180, 179, 162, 161, 160, 159, 142, 141, 140, 139, 122, 121, 120, 119, 102, 101]
+Machine 1  jobs: [198, 197, 184, 183, 178, 177, 164, 163, 158, 157, 144, 143, 138, 137, 124, 123, 118, 117, 104, 103]
+Machine 2  jobs: [196, 195, 186, 185, 176, 175, 166, 165, 156, 155, 146, 145, 136, 135, 126, 125, 116, 115, 106, 105]
+Machine 3  jobs: [194, 193, 188, 187, 174, 173, 168, 167, 154, 153, 148, 147, 134, 133, 128, 127, 114, 113, 108, 107]
+Machine 4  jobs: [192, 191, 190, 189, 172, 171, 170, 169, 152, 151, 150, 149, 132, 131, 130, 129, 112, 111, 110, 109]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575729
+sum_each_machine=[3010, 3010, 3010, 3010, 3010]
+Number of jobs for each machine:
+[20, 20, 20, 20, 20]
+Objective function value: 3010
+Machine 0  jobs: [200, 199, 182, 181, 180, 179, 162, 161, 160, 159, 142, 141, 140, 139, 122, 121, 120, 119, 102, 101]
+Machine 1  jobs: [198, 197, 184, 183, 178, 177, 164, 163, 158, 157, 144, 143, 138, 137, 124, 123, 118, 117, 104, 103]
+Machine 2  jobs: [196, 195, 186, 185, 176, 175, 166, 165, 156, 155, 146, 145, 136, 135, 126, 125, 116, 115, 106, 105]
+Machine 3  jobs: [194, 193, 188, 187, 174, 173, 168, 167, 154, 153, 148, 147, 134, 133, 128, 127, 114, 113, 108, 107]
+Machine 4  jobs: [192, 191, 190, 189, 172, 171, 170, 169, 152, 151, 150, 149, 132, 131, 130, 129, 112, 111, 110, 109]
+*********************************************** New Run ***********************************************
+Number of machines:  2
+Total number of jobs: 24
+initial bounds [Lower, Upper]: [220, 440]
+First partition:
+Machine 0  jobs: [30, 30, 30, 20, 16, 16, 16, 16, 16, 10, 10, 10]
+Machine 1  jobs: [30, 30, 20, 20, 20, 16, 16, 16, 16, 16, 10, 10]
+--------------------- new leading partition ---------------------
+sum_each_machine=[220, 220]
+Number of jobs:  [12, 12]
+Machine 0  jobs: [30, 30, 30, 20, 16, 16, 16, 16, 16, 10, 10, 10]
+Machine 1  jobs: [30, 30, 20, 20, 20, 16, 16, 16, 16, 16, 10, 10]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575731
+sum_each_machine=[220, 220]
+Number of jobs for each machine:
+[12, 12]
+Objective function value: 220
+Machine 0  jobs: [30, 30, 30, 20, 16, 16, 16, 16, 16, 10, 10, 10]
+Machine 1  jobs: [30, 30, 20, 20, 20, 16, 16, 16, 16, 16, 10, 10]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 18
+initial bounds [Lower, Upper]: [120, 540]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[120, 120, 120, 120, 60]
+Number of jobs:  [4, 4, 4, 4, 2]
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575736
+sum_each_machine=[120, 120, 120, 120, 60]
+Number of jobs for each machine:
+[4, 4, 4, 4, 2]
+Objective function value: 120
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  6
+Total number of jobs: 18
+initial bounds [Lower, Upper]: [120, 540]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[120, 120, 120, 60, 60, 60]
+Number of jobs:  [4, 4, 4, 2, 2, 2]
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575742
+sum_each_machine=[120, 120, 120, 60, 60, 60]
+Number of jobs for each machine:
+[4, 4, 4, 2, 2, 2]
+Objective function value: 120
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  7
+Total number of jobs: 18
+initial bounds [Lower, Upper]: [120, 540]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[120, 120, 60, 60, 60, 60, 60]
+Number of jobs:  [4, 4, 2, 2, 2, 2, 2]
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575749
+sum_each_machine=[120, 120, 60, 60, 60, 60, 60]
+Number of jobs for each machine:
+[4, 4, 2, 2, 2, 2, 2]
+Objective function value: 120
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30]
+Machine 3  jobs: [30, 30]
+Machine 4  jobs: [30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  7
+Total number of jobs: 24
+initial bounds [Lower, Upper]: [120, 720]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30, 30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[120, 120, 120, 120, 120, 60, 60]
+Number of jobs:  [4, 4, 4, 4, 4, 2, 2]
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30, 30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575756
+sum_each_machine=[120, 120, 120, 120, 120, 60, 60]
+Number of jobs for each machine:
+[4, 4, 4, 4, 4, 2, 2]
+Objective function value: 120
+Machine 0  jobs: [30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+Machine 4  jobs: [30, 30, 30, 30]
+Machine 5  jobs: [30, 30]
+Machine 6  jobs: [30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  4
+Total number of jobs: 24
+initial bounds [Lower, Upper]: [210, 720]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30, 30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[180, 180, 180, 180]
+Number of jobs:  [6, 6, 6, 6]
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30, 30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575764
+sum_each_machine=[180, 180, 180, 180]
+Number of jobs for each machine:
+[6, 6, 6, 6]
+Objective function value: 180
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30, 30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  4
+Total number of jobs: 22
+initial bounds [Lower, Upper]: [180, 660]
+First partition:
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+--------------------- new leading partition ---------------------
+sum_each_machine=[180, 180, 180, 120]
+Number of jobs:  [6, 6, 6, 4]
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575768
+sum_each_machine=[180, 180, 180, 120]
+Number of jobs for each machine:
+[6, 6, 6, 4]
+Objective function value: 180
+Machine 0  jobs: [30, 30, 30, 30, 30, 30]
+Machine 1  jobs: [30, 30, 30, 30, 30, 30]
+Machine 2  jobs: [30, 30, 30, 30, 30, 30]
+Machine 3  jobs: [30, 30, 30, 30]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 18
+initial bounds [Lower, Upper]: [240, 1080]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60]
+Machine 4  jobs: [60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[240, 240, 240, 240, 120]
+Number of jobs:  [4, 4, 4, 4, 2]
+Machine 0  jobs: [60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60]
+Machine 4  jobs: [60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575773
+sum_each_machine=[240, 240, 240, 240, 120]
+Number of jobs for each machine:
+[4, 4, 4, 4, 2]
+Objective function value: 240
+Machine 0  jobs: [60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60]
+Machine 4  jobs: [60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 28
+initial bounds [Lower, Upper]: [360, 1680]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[360, 360, 360, 360, 240]
+Number of jobs:  [6, 6, 6, 6, 4]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575778
+sum_each_machine=[360, 360, 360, 360, 240]
+Number of jobs for each machine:
+[6, 6, 6, 6, 4]
+Objective function value: 360
+Machine 0  jobs: [60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 40
+initial bounds [Lower, Upper]: [600, 2400]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[480, 480, 480, 480, 480]
+Number of jobs:  [8, 8, 8, 8, 8]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575788
+sum_each_machine=[480, 480, 480, 480, 480]
+Number of jobs for each machine:
+[8, 8, 8, 8, 8]
+Objective function value: 480
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60]
+*********************************************** New Run ***********************************************
+Number of machines:  5
+Total number of jobs: 54
+initial bounds [Lower, Upper]: [720, 3240]
+First partition:
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+--------------------- new leading partition ---------------------
+sum_each_machine=[720, 720, 600, 600, 600]
+Number of jobs:  [12, 12, 10, 10, 10]
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In total rendered nodes=1575793
+sum_each_machine=[720, 720, 600, 600, 600]
+Number of jobs for each machine:
+[12, 12, 10, 10, 10]
+Objective function value: 720
+Machine 0  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 1  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 2  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 3  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+Machine 4  jobs: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60]
+

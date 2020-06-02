@@ -77,6 +77,7 @@ def get_parameters(CASE):
         for i in range(1, 11):
             jobs_dict[str(i)] = i
 
+    # 20 jobs 4 machines
     if CASE == 2:
         for i in range(10):
             jobs_dict[str(i)] = 6
@@ -91,6 +92,7 @@ def get_parameters(CASE):
         for i in range(17, 20):
             jobs_dict[str(i)] = 12
 
+    # 60 jobs 16 machines
     if CASE == 3:
         for i in range(30):
             jobs_dict[str(i)] = 3
@@ -104,6 +106,7 @@ def get_parameters(CASE):
         for i in range(50, 60):
             jobs_dict[str(i)] = 4
 
+    # 60 jobs 6 machines
     if CASE == 4:
         for i in range(30):
             jobs_dict[str(i)] = 3
@@ -117,22 +120,27 @@ def get_parameters(CASE):
         for i in range(50, 60):
             jobs_dict[str(i)] = 6
 
+    # 12 jobs 4 machines
     if CASE == 5:
         for i, item in enumerate([57, 58, 59, 60, 31, 32, 33, 34, 35, 36, 37, 29, 30, 61, 72, 73, 74, 75, 3, 98, 99, 100]):
             jobs_dict[str(i)] = item
 
+    # 12 jobs 2 machines
     if CASE == 6:
         for i, item in enumerate([33, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]):
             jobs_dict[str(i)] = item
 
+    # 8 jobs 4 machines
     if CASE == 7:
         for i, item in enumerate([3, 3, 3, 3, 2, 2, 4, 4]):
             jobs_dict[str(i)] = item
 
+    # 14 jobs 4 machines
     if CASE == 8:
         for i, item in enumerate([3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4]):
             jobs_dict[str(i)] = item
 
+    # 100 jobs 5 machines
     if CASE == 9:
         for i in range(1, 101):
             jobs_dict[str(i)] = i

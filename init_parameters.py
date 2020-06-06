@@ -194,5 +194,7 @@ def get_parameters(CASE):
     print("average job time per machine:", sum(jobs_dict.values())/number_of_machines)
     # print("Number of machines: ", number_of_machines)
 
+    jobs_process_time = [1,2,3,4,5,6,7,8,9,10]
+
     return jobs_dict, number_of_machines
 

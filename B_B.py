@@ -632,7 +632,17 @@ def create_dict(case_id):
         for i in range(number_of_machines):
             dict[str(i)] = {}
 
-        for i in range(1200):
+        for i in range(3000):
+            jobs_dict[str(i)] = randrange(15, 25)
+    jobs_dict = {k: v for k, v in sorted(jobs_dict.items(), key=lambda key_value_tuple: key_value_tuple[1])}
+
+    if case_id == '5_rand':
+        number_of_machines = 5
+
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(14):
             jobs_dict[str(i)] = randrange(15, 25)
     jobs_dict = {k: v for k, v in sorted(jobs_dict.items(), key=lambda key_value_tuple: key_value_tuple[1])}
 
@@ -644,7 +654,7 @@ def create_dict(case_id):
 if __name__ == '__main__':
     # sys.stdout = open(r'C:\Users\user1\PycharmProjects\partitioning-algorithm\BB_output\out1.txt', mode='a')
 
-    for version_id in ["2_rand"]:
+    for version_id in ["5_rand"]:
     #for version_id in ["3_14_60", "3_16_60", "3_20_60", "2_12", "4_8", "4_14",  "3_184", "5_100", "2_24", "5_18_30", "6_18_30", "7_18_30", "7_24_30", "4_24_30", "4_22_30", "5_18_60", "5_28_60", "5_40_60", "5_54_60"]:
         # "3_20_rand", "4_20_rand", "4_40_rand",
         dict1 = create_dict(version_id)

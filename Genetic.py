@@ -18,11 +18,10 @@ Pseudocode version 1:
                                     3 draw a machine for this 2 jobs (treat them as a 'unit')
                                     4: back to stage 1
     
-        
 
 """
 
-num_of_chromosomes = 10
+num_of_chromosomes = 20
 
 class genetic:
 
@@ -32,6 +31,9 @@ class genetic:
         # Defining the population size
         self.num_of_chromosomes = num_of_chromosomes
         self.input_data = input_data
+        self.fitness_func = 1 # just a random number - still need to work on it
+        self.Mutation_percentage = 1 # just random - still need to work on it
+
     def action(self):
         """
         Performing Genetic algo approach
@@ -40,11 +42,27 @@ class genetic:
 
         """
         print("Starting Genetic")
-        population_sample = self.create_population(self.input_data)
+        population_sample = self.create_population()
         print(population_sample)
+        print(self.input_data)
 
     # TODO: check if actually working, He
-    def create_population(self, input_data):
+    def create_population(self):
+        """
+        The Method creates self.num_of_chromosomes chromosomes, each one in length(self.number_of_genes).
+        It creates a list of indexes in length(self.number_of_genes) and for each chromosome it randomly chooses first
+        index, removes it from the list, and then randomly chooses a second index (**).
+        After that it randomly chooses a Machine from the given list s.t these two jobs indexes will be assigned to
+        and adds the machine number according to the randomized indexes in the new chromosome
+        That results in a Matrix shaped arrays that represents the new chromosomes and their assigned machines
+
+        (**): we remove the indexes from the list so that we can't choose the same job twice - a job
+              can be assigned to one Machine only.
+
+        Returns: A Matrix in the size self.num_of_chromosomes X self.number_of_genes
+                 s.t every row represents a chromosome in length(self.number_of_genes)
+
+        """
 
         # initializing the matrix with '-1' in every entry
         population = -1*np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
@@ -54,21 +72,21 @@ class genetic:
 
             # each chromosome is in self.number_of_genes length
             chromosome_i = population[i]
-            # input_data_copy = deepcopy(input_data)
             # list of indexes we'll use to randomly chose jobs from
-            index_list = list(range(len(input_data)))
-            # Each time, generating 2 random jobs from the list and randomly assigns a machine for them
+            index_list = list(range(self.number_of_genes))
+
             j = 0
+
             # At each iteration we deal with 2 jobs - so do half of the input's length iterations
             for j in range(int((self.number_of_genes/2))):
-                # choose 2 random jobs indexes - after choosing the first one, remove it from the
-                #  list - so we don't choose it again and then choose the second job index - and remove this index from the list as well
+                # Each time, generate 2 random jobs from the list and randomly assign a machine for them
+
                 # TODO: check uniforn distribution
 
                 random_index1 = random.choice(index_list)
-                index_list.remove((random_index1))
+                index_list.remove(random_index1)
                 random_index2 = random.choice(index_list)
-                index_list.remove((random_index2))
+                index_list.remove(random_index2)
 
                 # choosing a random machine for the 2 chosen jobs
                 random_machine = random.choice(range(self.number_of_machines))
@@ -80,6 +98,73 @@ class genetic:
         # return the complete population
         return population
 
-    if __name__ == '__main__':
+     # TODO: calculate fitness function
+    def fitness_func_calc(self):
+        """
+        calculates current fitness function for this generation
+        Returns: None
 
-        print(create_population(input_data))
+        """
+        pass
+
+    def choose_parents_for_XO(self):
+        """
+        choosing parents (?) for XO
+        Returns:
+
+        """
+        pass
+
+    def perform_XO(self,  XO_position):
+        """
+        Actually doing the XO
+        Returns:
+
+        """
+        pass
+
+    def choose_Mutation(self):
+        """
+        TODO - check what to do with that
+        Returns:
+
+        """
+        pass
+
+    def perform_Mutation(self, Mutation_info):
+        """
+        Actually do Mutation
+        Args:
+            Mutation_info:
+
+        Returns:
+
+        """
+        pass
+
+    def choose_position_for_XO(self, low, high):
+        """
+        randomly choosing XO position for 2 chromosomes between low and high bounds
+        Returns:
+
+        """
+        pass
+
+    def calc_probabilities(self):
+        """
+        calculating probabilities for current population-
+        i.e - chromosome index, the chromosome itself, x_i (check again), choosing probability
+        Returns:
+
+        """
+
+    def elitism(self):
+        """
+        something should happen, right?
+        Returns:
+
+        """
+        pass
+
+
+# TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine

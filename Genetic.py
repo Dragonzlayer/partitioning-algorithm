@@ -33,6 +33,9 @@ class genetic:
         self.input_data = input_data
         self.fitness_func = 1 # just a random number - still need to work on it
         self.Mutation_percentage = 1 # just random - still need to work on it
+        self.population_sample = np.array(([]))
+        self.objective_function_value = 0 # initializing objective function value
+        self.obj_func_value_per_chromosome = np.array(([]))  # will store objective function value for each chromosome
 
     def action(self):
         """
@@ -42,9 +45,11 @@ class genetic:
 
         """
         print("Starting Genetic")
-        population_sample = self.create_population()
-        print(population_sample)
+        self.population_sample = self.create_population()
+        print(self.population_sample)
         print(self.input_data)
+        self.objective_function_value = self.objective_func_calc(self.population_sample)
+        print("First objective function value: ", self.objective_function_value)
 
     # TODO: check if actually working, He
     def create_population(self):
@@ -98,7 +103,26 @@ class genetic:
         # return the complete population
         return population
 
-     # TODO: calculate fitness function
+    # TODO: ask if objective function  is per chromosome or all population
+    def objective_func_calc(self, sample):
+        """
+        calculates objective function value by iterating every chromosome, and for each chromosome use decoding method
+        to find the process time of each machine.
+        Then -  stores the maximal process time for each chromosome as the objective function value in the according position
+
+        Args:
+            sample: The current population
+
+        Returns: Objective function value - max process time of all chromosomes
+
+        """
+
+        for i in range(self.num_of_chromosomes):
+            self.obj_func_value_per_chromosome = np.max(self.decoding(sample[i]))
+
+        return self.obj_func_value_per_chromosome
+
+    # TODO: calculate fitness function
     def fitness_func_calc(self):
         """
         calculates current fitness function for this generation
@@ -166,5 +190,24 @@ class genetic:
         """
         pass
 
+    # TODO: test if working properly
+    def decoding(self, chromosome):
+        """
+        Decoding each chromosome: creates an array in size len(self.number_of_machines)
+        s.t each position in the array stores the sum process time for each machine in the chromosome
+        Args:
+            chromosome: the array we need to decode
+
+        Returns: Arraythat stores the sum process time of each machine in the chromosome
+
+        """
+        sum_each_machine = np.zeros(self.number_of_machines)
+
+        for i in range(len(chromosome)):
+            sum_each_machine[chromosome[i]] += self.input_data[i]
+
+        return sum_each_machine
+
 
 # TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine
+# TODO decoding method to visually see the partition

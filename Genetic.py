@@ -34,8 +34,8 @@ class genetic:
         self.fitness_func = 1 # just a random number - still need to work on it
         self.Mutation_percentage = 1 # just random - still need to work on it
         self.population_sample = np.array(([]))
-        self.objective_function_value = 0 # initializing objective function value
-        self.obj_func_value_per_chromosome = np.array(([]))  # will store objective function value for each chromosome
+        self.objective_function_value = np.zeros(self.num_of_chromosomes) # initializing objective function value
+        # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome
 
     def action(self):
         """
@@ -50,8 +50,9 @@ class genetic:
         print(self.input_data)
         self.objective_function_value = self.objective_func_calc(self.population_sample)
         print("First objective function value: ", self.objective_function_value)
+        #print("decoded:", self.decoding(self.population_sample[0]))
+        print((self.calc_probabilities(self.population_sample)))
 
-    # TODO: check if actually working, He
     def create_population(self):
         """
         The Method creates self.num_of_chromosomes chromosomes, each one in length(self.number_of_genes).
@@ -103,7 +104,6 @@ class genetic:
         # return the complete population
         return population
 
-    # TODO: ask if objective function  is per chromosome or all population
     def objective_func_calc(self, sample):
         """
         calculates objective function value by iterating every chromosome, and for each chromosome use decoding method
@@ -113,14 +113,14 @@ class genetic:
         Args:
             sample: The current population
 
-        Returns: Objective function value - max process time of all chromosomes
+        Returns: Objective function value - max process time of every chromosome
 
         """
 
         for i in range(self.num_of_chromosomes):
-            self.obj_func_value_per_chromosome = np.max(self.decoding(sample[i]))
+            self.objective_function_value[i] = np.max(self.decoding(sample[i]))
 
-        return self.obj_func_value_per_chromosome
+        return self.objective_function_value
 
     # TODO: calculate fitness function
     def fitness_func_calc(self):
@@ -174,13 +174,22 @@ class genetic:
         """
         pass
 
-    def calc_probabilities(self):
+    # TODO: fix representation
+    def calc_probabilities(self, population):
         """
         calculating probabilities for current population-
         i.e - chromosome index, the chromosome itself, x_i (check again), choosing probability
-        Returns:
+        Returns: Matrix representation of current population's data
 
         """
+        population_data =  np.zeros((self.num_of_chromosomes, 4), dtype=float)
+        sum_obj_functions = np.sum(self.objective_function_value)
+        for i in range(self.num_of_chromosomes):
+            population_data[i] =['chromosome index: {0} chromosome: {1} function value: {2} choosing probability:{3}'.format(i, population[i],
+            self.objective_function_value[i] , self.objective_function_value[i] / sum_obj_functions)]
+
+        return population_data
+
 
     def elitism(self):
         """
@@ -190,7 +199,6 @@ class genetic:
         """
         pass
 
-    # TODO: test if working properly
     def decoding(self, chromosome):
         """
         Decoding each chromosome: creates an array in size len(self.number_of_machines)
@@ -198,7 +206,7 @@ class genetic:
         Args:
             chromosome: the array we need to decode
 
-        Returns: Arraythat stores the sum process time of each machine in the chromosome
+        Returns: Array that stores the sum process time of each machine in the chromosome
 
         """
         sum_each_machine = np.zeros(self.number_of_machines)
@@ -207,6 +215,16 @@ class genetic:
             sum_each_machine[chromosome[i]] += self.input_data[i]
 
         return sum_each_machine
+    # TODO: do
+    def correction(self, chromosome):
+        """
+        to correct invalid chromosomes from XO/mutation
+        Args:
+            chromosome:
+
+        Returns:
+
+        """
 
 
 # TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine

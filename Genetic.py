@@ -145,13 +145,30 @@ class genetic:
 
         return XO_partners
 
-    def perform_XO(self, XO_position):
+     # TODO: check if working, and if giving 2 chromosomes is neccessary
+    # TODO: first keep working on that!
+    def perform_XO(self, xo_position, index_1, index_2):
         """
         Actually doing the XO
         Returns:
 
         """
-        pass
+        chromosome_1 = -1 * np.ones((1, self.number_of_genes), dtype=int)
+        chromosome_2 = -1 * np.ones((1, self.number_of_genes), dtype=int)
+
+        # copies of the according chromosomes - will help us perform XO
+        chromosome_1 = self.population_sample[index_1][0: xo_position: 1]
+        remainder_1 = self.population_sample[xo_position+1]
+        chromosome_2 = self.population_sample[index_2][0: xo_position: 1]
+        remainder_2 = self.population_sample[xo_position + 1]
+
+        # TODO: need to glue the remainders to the chromosomes!
+
+        for i in range(self.number_of_genes-xo_position):
+            chromosome_1[xo_position + i] = remainder_1[i]
+            chromosome_2[xo_position + i] = remainder_2[i]
+
+        return chromosome_1, chromosome_2
 
     def choose_Mutation(self):
         """

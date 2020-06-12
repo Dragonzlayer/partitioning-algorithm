@@ -22,20 +22,25 @@ Pseudocode version 1:
 """
 
 num_of_chromosomes = 20
+XO_parameter = 1 # parameter that stores the numbers of chromosomes we'll perform XO over
+
 
 class genetic:
 
-    def __init__(self, input_data, number_of_machines): # input_data is a list of 2n jobs
+    def __init__(self, input_data, number_of_machines):  # input_data is a list of 2n jobs
         self.number_of_genes = len(input_data)  # length is number of jobs
         self.number_of_machines = number_of_machines
-        # Defining the population size
+        # Defining the population_sample size
         self.num_of_chromosomes = num_of_chromosomes
         self.input_data = input_data
-        self.fitness_func = 1 # just a random number - still need to work on it
-        self.Mutation_percentage = 1 # just random - still need to work on it
-        self.population_sample = np.array(([]))
-        self.objective_function_value = np.zeros(self.num_of_chromosomes) # initializing objective function value
+        self.fitness_func = 1  # just a random number - still need to work on it
+        self.Mutation_percentage = 1  # just random - still need to work on it
+        self.objective_function_value = np.zeros(self.num_of_chromosomes)  # initializing objective function value
+        self.probabilities = np.zeros(self.num_of_chromosomes)  # initializing probabilities value for each chromosome
         # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome
+
+        # the complete self.population_sample, initializing the matrix with '-1' in every entry
+        self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
 
     def action(self):
         """
@@ -45,12 +50,12 @@ class genetic:
 
         """
         print("Starting Genetic")
-        self.population_sample = self.create_population()
+        self.create_population()
         print(self.population_sample)
         print(self.input_data)
         self.objective_function_value = self.objective_func_calc(self.population_sample)
         print("First objective function value: ", self.objective_function_value)
-        #print("decoded:", self.decoding(self.population_sample[0]))
+        # print("decoded:", self.decoding(self.population_sample[0]))
         print((self.calc_probabilities(self.population_sample)))
 
     def create_population(self):
@@ -70,21 +75,18 @@ class genetic:
 
         """
 
-        # initializing the matrix with '-1' in every entry
-        population = -1*np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
-
         # How many chromosomes to create
         for i in range(self.num_of_chromosomes):
 
             # each chromosome is in self.number_of_genes length
-            chromosome_i = population[i]
+            chromosome_i = self.population_sample[i]
             # list of indexes we'll use to randomly chose jobs from
             index_list = list(range(self.number_of_genes))
 
             j = 0
 
             # At each iteration we deal with 2 jobs - so do half of the input's length iterations
-            for j in range(int((self.number_of_genes/2))):
+            for j in range(int((self.number_of_genes / 2))):
                 # Each time, generate 2 random jobs from the list and randomly assign a machine for them
 
                 # TODO: check uniforn distribution
@@ -101,9 +103,6 @@ class genetic:
                 chromosome_i[random_index1] = random_machine
                 chromosome_i[random_index2] = random_machine
 
-        # return the complete population
-        return population
-
     def objective_func_calc(self, sample):
         """
         calculates objective function value by iterating every chromosome, and for each chromosome use decoding method
@@ -111,7 +110,7 @@ class genetic:
         Then -  stores the maximal process time for each chromosome as the objective function value in the according position
 
         Args:
-            sample: The current population
+            sample: The current population_sample
 
         Returns: Objective function value - max process time of every chromosome
 
@@ -131,15 +130,22 @@ class genetic:
         """
         pass
 
+    # TODO: check if actually working, he
     def choose_parents_for_XO(self):
         """
         choosing parents (?) for XO
-        Returns:
+        Returns: list of indexes s.t every two adjacent indexes are the parent "chosen together"
 
         """
-        pass
+        # np array that contains the pairs of chromosomes for XO
+        XO_partners = -1 * np.ones((1, XO_parameter), dtype=int)
 
-    def perform_XO(self,  XO_position):
+        for i in range(XO_parameter): # TODO: check if it's actually working
+            XO_partners[i] = random.choices(self.population_sample, weights=self.probabilities, k=2)
+
+        return XO_partners
+
+    def perform_XO(self, XO_position):
         """
         Actually doing the XO
         Returns:
@@ -166,30 +172,33 @@ class genetic:
         """
         pass
 
-    def choose_position_for_XO(self, low, high):
+    # TODO: merge it into perform_XO
+    def choose_position_for_XO(self):
         """
-        randomly choosing XO position for 2 chromosomes between low and high bounds
-        Returns:
+        randomly choosing XO position for 2 chromosomes
+        Returns: number (int) represents the position in which we'll perform the XO
 
         """
-        pass
+        # returns random index in range(self.number_of_genes)
+        return random.choice(self.number_of_genes)
 
     # TODO: fix representation
     def calc_probabilities(self, population):
         """
-        calculating probabilities for current population-
+        calculating probabilities for current population_sample-
         i.e - chromosome index, the chromosome itself, x_i (check again), choosing probability
-        Returns: Matrix representation of current population's data
+        Returns: Matrix representation of current population_sample's data
 
         """
-        population_data =  np.zeros((self.num_of_chromosomes, 4), dtype=float)
+        population_data = np.zeros((self.num_of_chromosomes, 4), dtype=float)
         sum_obj_functions = np.sum(self.objective_function_value)
         for i in range(self.num_of_chromosomes):
-            population_data[i] =['chromosome index: {0} chromosome: {1} function value: {2} choosing probability:{3}'.format(i, population[i],
-            self.objective_function_value[i] , self.objective_function_value[i] / sum_obj_functions)]
+            self.probabilities[i] = self.objective_function_value[i] / sum_obj_functions
+            print(
+                f'ID {i}: {population[i]} function value: {self.objective_function_value[i]} choosing prob:{round(self.probabilities[i], 6)}')
+            # population_data[i] =[f'chromosome index: {i} chromosome: {population_sample[i]} function value: {self.objective_function_value[i]} choosing probability:{self.objective_function_value[i] / sum_obj_functions}']
 
         return population_data
-
 
     def elitism(self):
         """
@@ -215,6 +224,7 @@ class genetic:
             sum_each_machine[chromosome[i]] += self.input_data[i]
 
         return sum_each_machine
+
     # TODO: do
     def correction(self, chromosome):
         """
@@ -225,7 +235,6 @@ class genetic:
         Returns:
 
         """
-
 
 # TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine
 # TODO decoding method to visually see the partition

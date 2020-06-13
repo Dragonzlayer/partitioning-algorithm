@@ -33,7 +33,7 @@ class genetic:
         # Defining the population_sample size
         self.num_of_chromosomes = num_of_chromosomes
         self.input_data = input_data
-        self.fitness_func = 1  # just a random number - still need to work on it
+        self.fitness_func = np.zeros(self.num_of_chromosomes)
         self.Mutation_percentage = 1  # just random - still need to work on it
         self.objective_function_value = np.zeros(self.num_of_chromosomes)  # initializing objective function value
         self.probabilities = np.zeros(self.num_of_chromosomes)  # initializing probabilities value for each chromosome
@@ -41,6 +41,7 @@ class genetic:
 
         # the complete self.population_sample, initializing the matrix with '-1' in every entry
         self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
+        self.sum_obj_functions = 0  # initializing - check if it's the correct type
 
     def action(self):
         """
@@ -57,6 +58,9 @@ class genetic:
         print("First objective function value: ", self.objective_function_value)
         # print("decoded:", self.decoding(self.population_sample[0]))
         print((self.calc_probabilities(self.population_sample)))
+        print(self.sum_obj_functions)
+        print(self.fitness_func)
+        print(self.objective_function_value)
 
     def create_population(self):
         """
@@ -121,14 +125,17 @@ class genetic:
 
         return self.objective_function_value
 
-    # TODO: calculate fitness function
+    # TODO: not working - check why
     def fitness_func_calc(self):
         """
         calculates current fitness function for this generation
+        * First version: sum of all objective functions - objective function value for a given chromosome
+
         Returns: None
 
         """
-        pass
+        for i in range(self.num_of_chromosomes):
+            self.fitness_func[i] = self.sum_obj_functions - self.objective_function_value[i]
 
     # TODO: check if actually working, he
     def choose_parents_for_XO(self):
@@ -153,22 +160,15 @@ class genetic:
         Returns:
 
         """
-        chromosome_1 = -1 * np.ones((1, self.number_of_genes), dtype=int)
-        chromosome_2 = -1 * np.ones((1, self.number_of_genes), dtype=int)
+        # TODO makesure updates self.pop
+        chrome1 = self.population_sample[index_1]
+        chrome2 = self.population_sample[index_2]
 
-        # copies of the according chromosomes - will help us perform XO
-        chromosome_1 = self.population_sample[index_1][0: xo_position: 1]
-        remainder_1 = self.population_sample[xo_position+1]
-        chromosome_2 = self.population_sample[index_2][0: xo_position: 1]
-        remainder_2 = self.population_sample[xo_position + 1]
+        temp = deepcopy(chrome1[xo_position:])
+        chrome1[xo_position:] = chrome2[xo_position:]
+        chrome2[xo_position:] = temp
 
-        # TODO: need to glue the remainders to the chromosomes!
-
-        for i in range(self.number_of_genes-xo_position):
-            chromosome_1[xo_position + i] = remainder_1[i]
-            chromosome_2[xo_position + i] = remainder_2[i]
-
-        return chromosome_1, chromosome_2
+        # return chromosome_1, chromosome_2
 
     def choose_Mutation(self):
         """
@@ -176,9 +176,9 @@ class genetic:
         Returns:
 
         """
-        pass
+        return random.uniform(0.1, 5)  # TODO: merge it into mutation method, check how to use it
 
-    def perform_Mutation(self, Mutation_info):
+    def perform_Mutation(self, Mutation_info):  # TODD: what is mutation?
         """
         Actually do Mutation
         Args:
@@ -207,15 +207,13 @@ class genetic:
         Returns: Matrix representation of current population_sample's data
 
         """
-        population_data = np.zeros((self.num_of_chromosomes, 4), dtype=float)
-        sum_obj_functions = np.sum(self.objective_function_value)
+        self.sum_obj_functions = np.sum(self.objective_function_value)
         for i in range(self.num_of_chromosomes):
-            self.probabilities[i] = self.objective_function_value[i] / sum_obj_functions
+            self.probabilities[i] = self.objective_function_value[i] / self.sum_obj_functions
+
             print(
                 f'ID {i}: {population[i]} function value: {self.objective_function_value[i]} choosing prob:{round(self.probabilities[i], 6)}')
             # population_data[i] =[f'chromosome index: {i} chromosome: {population_sample[i]} function value: {self.objective_function_value[i]} choosing probability:{self.objective_function_value[i] / sum_obj_functions}']
-
-        return population_data
 
     def elitism(self):
         """

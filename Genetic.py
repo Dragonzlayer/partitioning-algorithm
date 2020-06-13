@@ -5,6 +5,7 @@ import numpy as np
 from heapq import nsmallest
 import sys
 import random
+from itertools import combinations
 """"
 Pseudocode version 1:
 
@@ -66,6 +67,8 @@ class genetic:
         self.perform_Mutation()
         # print("After mutation:")
         # print(self.population_sample)
+        # for indx in range(self.num_of_chromosomes):
+        self.correction(np.array([1,1,1,1,1,0,0,0,0,0]))
 
     def create_population(self):
         """
@@ -261,21 +264,54 @@ class genetic:
         Returns:
 
         """
+        decoded_chromosome = self.decoding(chromosome)
         # stores the unique machines values in ascending order
         # stores the frequency for each machine - i.e how many jobs are assigned to each machine
 
         i = 0
         # array that stores 0 if the machine with the current index has even number of jobs - and 1 if it's odd
-        odd_even = np.zeros(self.number_of_machines)
+        # odd_even = np.zeros(self.number_of_machines)
         # uniques stores uniques machine values
         # frequencies stores how many jobs assigned to each machine in the corresponding position in the array
         uniques, frequencies = np.unique(chromosome, return_counts=True)
 
+        odd_machines = []
         for machine, count in zip(uniques, frequencies):
-            odd_even[i] = count % 2
-            i = i+1
+            if count % 2 == 1:
+                odd_machines.append(machine)
 
-        for index in odd_even:
+        pairs =[]
+        for i in range(0,len(odd_machines),2):
+            pairs.append((odd_machines[i], odd_machines[i+1]))
+
+        for i, j in pairs:
+            if decoded_chromosome[i] > decoded_chromosome[j]:
+
+
+                masked = np.ma.MaskedArray(self.input_data, chromosome != i)
+                index_min_job = np.ma.argmin(masked)
+                chromosome[index_min_job] = j
+
+            else:
+                masked = np.ma.MaskedArray(self.input_data, chromosome != j)
+                index_min_job = np.ma.argmin(masked)
+                chromosome[index_min_job] = i
+
+        # todo delete below
+        uniques, frequencies = np.unique(chromosome, return_counts=True)
+        odd_machines = []
+        for machine, count in zip(uniques, frequencies):
+            if count % 2 == 1:
+                odd_machines.append(machine)
+        if odd_machines:
+            print("ERRRORRRRR")
+        else:
+            print("NO ERRORRRR")
+
+
+        # for index in odd_even:
+        # more from machine with higher sum the job with minimal val to the other machine in the pair
+
 
 
 

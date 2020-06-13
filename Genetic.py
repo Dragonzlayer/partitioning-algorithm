@@ -5,7 +5,6 @@ import numpy as np
 from heapq import nsmallest
 import sys
 import random
-
 """"
 Pseudocode version 1:
 
@@ -20,7 +19,8 @@ Pseudocode version 1:
     
 
 """
-
+np.random.seed(0)
+random.seed(1)
 num_of_chromosomes = 20
 XO_parameter = 1 # parameter that stores the numbers of chromosomes we'll perform XO over
 
@@ -42,6 +42,7 @@ class genetic:
         # the complete self.population_sample, initializing the matrix with '-1' in every entry
         self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
         self.sum_obj_functions = 0  # initializing - check if it's the correct type
+        self.mutated_indexes = [] # stores indexes of chromosomes who've been mutated
 
     def action(self):
         """
@@ -52,15 +53,19 @@ class genetic:
         """
         print("Starting Genetic")
         self.create_population()
-        print(self.population_sample)
+
         print(self.input_data)
         self.objective_function_value = self.objective_func_calc(self.population_sample)
         print("First objective function value: ", self.objective_function_value)
         # print("decoded:", self.decoding(self.population_sample[0]))
         print((self.calc_probabilities(self.population_sample)))
         print(self.sum_obj_functions)
-        print(self.fitness_func)
+        self.fitness_func_calc()
         print(self.objective_function_value)
+        # print(self.population_sample)
+        self.perform_Mutation()
+        # print("After mutation:")
+        # print(self.population_sample)
 
     def create_population(self):
         """
@@ -107,6 +112,8 @@ class genetic:
                 chromosome_i[random_index1] = random_machine
                 chromosome_i[random_index2] = random_machine
 
+        print(self.population_sample)
+
     def objective_func_calc(self, sample):
         """
         calculates objective function value by iterating every chromosome, and for each chromosome use decoding method
@@ -134,8 +141,9 @@ class genetic:
         Returns: None
 
         """
-        for i in range(self.num_of_chromosomes):
-            self.fitness_func[i] = self.sum_obj_functions - self.objective_function_value[i]
+        self.fitness_func = self.sum_obj_functions - self.objective_function_value
+
+        print(self.fitness_func)
 
     # TODO: check if actually working, he
     def choose_parents_for_XO(self):
@@ -147,19 +155,20 @@ class genetic:
         # np array that contains the pairs of chromosomes for XO
         XO_partners = -1 * np.ones((1, XO_parameter), dtype=int)
 
-        for i in range(XO_parameter): # TODO: check if it's actually working
+        for i in range(XO_parameter):  # TODO: check if it's actually working
             XO_partners[i] = random.choices(self.population_sample, weights=self.probabilities, k=2)
 
         return XO_partners
 
-     # TODO: check if working, and if giving 2 chromosomes is neccessary
+    # TODO: check if working, and if giving 2 chromosomes is neccessary
     # TODO: first keep working on that!
-    def perform_XO(self, xo_position, index_1, index_2):
+    def perform_XO(self, index_1, index_2):
         """
         Actually doing the XO
         Returns:
 
         """
+        xo_position = random.choice(self.number_of_genes)
         # TODO makesure updates self.pop
         chrome1 = self.population_sample[index_1]
         chrome2 = self.population_sample[index_2]
@@ -170,34 +179,34 @@ class genetic:
 
         # return chromosome_1, chromosome_2
 
-    def choose_Mutation(self):
+    def perform_Mutation(self):
         """
-        TODO - check what to do with that
-        Returns:
+        Perform Mutation:
+            uniformly choose probability for mutation between 0.1% and 5%.
+            According to the chosen mutation probability - chose a chromosome to mutate:
+                randomly draw an index and machine number and change the machine value
+                at the randomized index to the drawed machine number
+
+        Then Mark its position in the mutated chromosomes index list
+        and send it to self.correction method - to ensure that the chromosome is in
+        valid form after  mutation
+
+        Args: Self
+        Returns: None
 
         """
-        return random.uniform(0.1, 5)  # TODO: merge it into mutation method, check how to use it
-
-    def perform_Mutation(self, Mutation_info):  # TODD: what is mutation?
-        """
-        Actually do Mutation
-        Args:
-            Mutation_info:
-
-        Returns:
-
-        """
-        pass
-
-    # TODO: merge it into perform_XO
-    def choose_position_for_XO(self):
-        """
-        randomly choosing XO position for 2 chromosomes
-        Returns: number (int) represents the position in which we'll perform the XO
-
-        """
-        # returns random index in range(self.number_of_genes)
-        return random.choice(self.number_of_genes)
+        mutation_prob = random.uniform(0.001, 0.05)
+        print(f"{mutation_prob=}")
+        for i in range(self.num_of_chromosomes):
+            # draw random between 0 and 1
+            x = random.random()
+            if x < mutation_prob:
+                position = random.randint(0, self.number_of_genes-1)
+                machine = random.randint(0, self.number_of_machines-1)
+                self.population_sample[i][position] = machine
+                self.mutated_indexes.append(i)
+                self.correction(self.population_sample[i])
+                print(f"mutate chrome {i}, gene {position} to machine {machine}")
 
     # TODO: fix representation
     def calc_probabilities(self, population):
@@ -208,20 +217,23 @@ class genetic:
 
         """
         self.sum_obj_functions = np.sum(self.objective_function_value)
+        self.probabilities = self.objective_function_value / self.sum_obj_functions
         for i in range(self.num_of_chromosomes):
-            self.probabilities[i] = self.objective_function_value[i] / self.sum_obj_functions
-
             print(
                 f'ID {i}: {population[i]} function value: {self.objective_function_value[i]} choosing prob:{round(self.probabilities[i], 6)}')
             # population_data[i] =[f'chromosome index: {i} chromosome: {population_sample[i]} function value: {self.objective_function_value[i]} choosing probability:{self.objective_function_value[i] / sum_obj_functions}']
 
     def elitism(self):
         """
-        something should happen, right?
-        Returns:
+        Choose the chromosome with the highest fitness function value
+        and transfer it as is to the next generation.
+        * Marks its position in the mutated chromosomes index list
+
+        Returns: None
 
         """
-        pass
+        index_for_elitism = np.argmax(self.fitness_func)
+        self.mutated_indexes.append(index_for_elitism)
 
     def decoding(self, chromosome):
         """

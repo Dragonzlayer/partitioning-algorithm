@@ -79,6 +79,7 @@ def run_ls(state):
     print("Squared sum of process times for each machine: ", local_searcher.sum_squared_processing_times)
 
 def run_genetic(jobs_process_time, number_of_machines):
+
     genetic_run = genetic(jobs_process_time, number_of_machines)
     genetic_run.action()
 

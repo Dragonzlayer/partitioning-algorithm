@@ -251,16 +251,33 @@ class genetic:
 
         return sum_each_machine
 
-    # TODO: do
+    # TODO: FINISH
     def correction(self, chromosome):
         """
-        to correct invalid chromosomes from XO/mutation
+        to correct invalid chromosomes from XO
         Args:
             chromosome:
 
         Returns:
 
         """
+        # stores the unique machines values in ascending order
+        # stores the frequency for each machine - i.e how many jobs are assigned to each machine
+
+        i = 0
+        # array that stores 0 if the machine with the current index has even number of jobs - and 1 if it's odd
+        odd_even = np.zeros(self.number_of_machines)
+        # uniques stores uniques machine values
+        # frequencies stores how many jobs assigned to each machine in the corresponding position in the array
+        uniques, frequencies = np.unique(chromosome, return_counts=True)
+
+        for machine, count in zip(uniques, frequencies):
+            odd_even[i] = count % 2
+            i = i+1
+
+        for index in odd_even:
+
+
 
 # TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine
 # TODO decoding method to visually see the partition

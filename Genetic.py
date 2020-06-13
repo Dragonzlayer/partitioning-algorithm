@@ -179,17 +179,15 @@ class genetic:
 
         # return chromosome_1, chromosome_2
 
+    # TODO: check if working
     def perform_Mutation(self):
         """
         Perform Mutation:
             uniformly choose probability for mutation between 0.1% and 5%.
             According to the chosen mutation probability - chose a chromosome to mutate:
-                randomly draw an index and machine number and change the machine value
-                at the randomized index to the drawed machine number
+                Then randomly draw 2 indexes and swap their machine's assignments
 
-        Then Mark its position in the mutated chromosomes index list
-        and send it to self.correction method - to ensure that the chromosome is in
-        valid form after  mutation
+        Mark its position in the mutated chromosomes index list
 
         Args: Self
         Returns: None
@@ -201,12 +199,13 @@ class genetic:
             # draw random between 0 and 1
             x = random.random()
             if x < mutation_prob:
-                position = random.randint(0, self.number_of_genes-1)
-                machine = random.randint(0, self.number_of_machines-1)
-                self.population_sample[i][position] = machine
+                position1 = random.randint(0, self.number_of_genes-1)
+                position2 = random.randint(0, self.number_of_genes - 1)
+                temp = position2
+                self.population_sample[i][position2] = self.population_sample[i][position1]
+                self.population_sample[i][position1] = self.population_sample[i][temp]
                 self.mutated_indexes.append(i)
-                self.correction(self.population_sample[i])
-                print(f"mutate chrome {i}, gene {position} to machine {machine}")
+                # print(f"mutate chrome {i}, gene {position} to machine {machine}")
 
     # TODO: fix representation
     def calc_probabilities(self, population):

@@ -26,7 +26,7 @@ Pseudocode version 1:
 """
 np.random.seed(0)
 random.seed(1)
-num_of_chromosomes = 100
+num_of_chromosomes = 200
 XO_parameter = 49  # parameter that stores the numbers of chromosomes we'll perform XO over
 num_generations = 1000  # just initialization - change when necessary
 
@@ -83,22 +83,29 @@ class genetic:
         for generation in range(num_generations):
             print(" ------------ New generation ------------")
             self.mutated_indexes.clear()
+
             self.objective_func_calc()
             print(self.objective_function_value)
+
             self.fitness_func_calc()
             print(self.fitness_func)
+
             self.calc_probabilities()
             print(self.probabilities)
+
             self.elitism()
-            self.elitism()
-            self.elitism()
+            # self.elitism()
+            # self.elitism()
             print(self.population_sample[self.mutated_indexes])
             print(self.decoding(self.population_sample[self.mutated_indexes][0]))
+
             self.perform_Mutation()
-            print(self.population_sample[self.mutated_indexes[1:]])
+            print(self.population_sample[self.mutated_indexes])
+
             print("XO")
             self.choose_parents_for_XO()
             print(self.XO_partners)
+
             for indx in range(XO_parameter):
                 # TODO: how to choose them using fitnees function?
                 self.perform_XO(self.XO_partners[indx, 0], self.XO_partners[indx, 1])
@@ -187,7 +194,7 @@ class genetic:
         """
         print("Calculating fitness function:")
 
-        self.fitness_func = self.sum_input_data + 1 - self.objective_function_value
+        self.fitness_func = self.sum_input_data - self.objective_function_value
 
         # print(self.fitness_func)
 
@@ -272,8 +279,9 @@ class genetic:
         """
         print("Calculating probabilities:")
 
-        # self.probabilities = self.fitness_func / np.sum(self.fitness_func)
-        self.probabilities = softmax(self.fitness_func)
+        self.probabilities = self.fitness_func / np.sum(self.fitness_func)
+        # self.probabilities = self.objective_function_value / np.sum(self.objective_function_value)
+        # self.probabilities = softmax(self.objective_function_value)
 
         # for i in range(self.num_of_chromosomes):
         # print(

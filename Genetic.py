@@ -23,7 +23,8 @@ Pseudocode version 1:
 np.random.seed(0)
 random.seed(1)
 num_of_chromosomes = 20
-XO_parameter = 1 # parameter that stores the numbers of chromosomes we'll perform XO over
+XO_parameter = 3 # parameter that stores the numbers of chromosomes we'll perform XO over
+num_generations = 3 # just initialization - change when necessary
 
 
 class genetic:
@@ -45,6 +46,9 @@ class genetic:
         self.sum_obj_functions = 0  # initializing - check if it's the correct type
         self.mutated_indexes = []  # stores indexes of chromosomes who've been mutated
         self.sum_input_data = np.sum(input_data)
+        self.XO_partners = -1 * np.ones((XO_parameter,2 ), dtype=int)
+
+
 
     def action(self):
         """
@@ -53,23 +57,41 @@ class genetic:
             # TODO: Add documentation
 
         """
+        """
+            print(self.input_data)
+            self.objective_function_value = self.objective_func_calc(self.population_sample)
+            print("First objective function value: ", self.objective_function_value)
+            # print("decoded:", self.decoding(self.population_sample[0]))
+            print((self.calc_probabilities(self.population_sample)))
+            print(self.sum_obj_functions)
+            self.fitness_func_calc()
+            print(self.objective_function_value)
+            # print(self.population_sample)
+            self.perform_Mutation()
+            # print("After mutation:")
+            # print(self.population_sample)
+            # for indx in range(self.num_of_chromosomes):
+            self.correction(np.array([1,1,1,1,1,0,0,0,0,0]))
+        """
         print("Starting Genetic")
         self.create_population()
 
-        print(self.input_data)
-        self.objective_function_value = self.objective_func_calc(self.population_sample)
-        print("First objective function value: ", self.objective_function_value)
-        # print("decoded:", self.decoding(self.population_sample[0]))
-        print((self.calc_probabilities(self.population_sample)))
-        print(self.sum_obj_functions)
-        self.fitness_func_calc()
-        print(self.objective_function_value)
-        # print(self.population_sample)
-        self.perform_Mutation()
-        # print("After mutation:")
-        # print(self.population_sample)
-        # for indx in range(self.num_of_chromosomes):
-        self.correction(np.array([1,1,1,1,1,0,0,0,0,0]))
+        for generation in range(num_generations):
+            print(" ------------ New generation")
+            self.mutated_indexes.clear()
+            self.objective_function_value = self.objective_func_calc(self.population_sample)
+            self.calc_probabilities(self.population_sample)
+            self.fitness_func_calc()
+            self.elitism()
+            self.perform_Mutation()
+            self.choose_parents_for_XO()
+            for indx in range(XO_parameter):
+                # TODO: how to choose them using fitnees function?
+                self.perform_XO(self.XO_partners[indx,0], self.XO_partners[indx, 1])
+
+            print(self.population_sample)
+
+
 
     def create_population(self):
         """
@@ -157,13 +179,10 @@ class genetic:
 
         """
         # np array that contains the pairs of chromosomes for XO
-        XO_partners = -1 * np.ones((1, XO_parameter), dtype=int)
 
         for i in range(XO_parameter):  # TODO: check if it's actually working
-            XO_partners[i] = random.choices(self.population_sample, weights=self.probabilities, k=2)
-
-        return XO_partners
-
+            x = np.array(random.choices(list(range(num_of_chromosomes)), weights=self.probabilities, k=2))
+            self.XO_partners[i] = x
     # TODO: check if working, and if giving 2 chromosomes is neccessary
     # TODO: first keep working on that!
     def perform_XO(self, index_1, index_2):
@@ -172,7 +191,7 @@ class genetic:
         Returns:
 
         """
-        xo_position = random.choice(self.number_of_genes)
+        xo_position = random.choice(list(range(self.number_of_genes)))
         # TODO makesure updates self.pop
         chrome1 = self.population_sample[index_1]
         chrome2 = self.population_sample[index_2]
@@ -180,6 +199,10 @@ class genetic:
         temp = deepcopy(chrome1[xo_position:])
         chrome1[xo_position:] = chrome2[xo_position:]
         chrome2[xo_position:] = temp
+
+        # sending the chromosomes to self.correction() in case the XO caused for invalid partition
+        self.correction(chrome1)
+        self.correction(chrome1)
 
         # return chromosome_1, chromosome_2
 
@@ -200,6 +223,11 @@ class genetic:
         mutation_prob = random.uniform(0.001, 0.05)
         print(f"{mutation_prob=}")
         for i in range(self.num_of_chromosomes):
+            # Don't perform mutation on elitist chromosome
+            # if there's more than one elitist chromosome - perform the comparison accordingly
+            if i == self.mutated_indexes[0]:
+                pass
+        else:
             # draw random between 0 and 1
             x = random.random()
             if x < mutation_prob:
@@ -286,7 +314,6 @@ class genetic:
             pairs.append((odd_machines[i], odd_machines[i+1]))
 
         for i, j in pairs:
-            print(i,j)
             print(decoded_chromosome[i])
             print(decoded_chromosome[j])
             if decoded_chromosome[j] > decoded_chromosome[i]:

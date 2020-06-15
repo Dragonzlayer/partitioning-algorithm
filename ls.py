@@ -177,7 +177,7 @@ class LocalSearch:
          Returns:
              bool, true - if switching these jobs will improve objective/helper function, False - otherwise
          """
-        # calculating objective function values given the jobs were transferred
+        # calculating objective function values given the jobs were switched
         self.counter += 1
 
         self.sum_processing_times_per_machine[source_machine] += sum_jobs_to_move

@@ -43,7 +43,8 @@ class genetic:
         # the complete self.population_sample, initializing the matrix with '-1' in every entry
         self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
         self.sum_obj_functions = 0  # initializing - check if it's the correct type
-        self.mutated_indexes = [] # stores indexes of chromosomes who've been mutated
+        self.mutated_indexes = []  # stores indexes of chromosomes who've been mutated
+        self.sum_input_data = np.sum(input_data)
 
     def action(self):
         """
@@ -135,7 +136,7 @@ class genetic:
 
         return self.objective_function_value
 
-    # TODO: not working - check why
+    # TODO: I've added 1 so that no chromosome will receive the value '0' - check if OK or what/how to fix
     def fitness_func_calc(self):
         """
         calculates current fitness function for this generation
@@ -144,7 +145,7 @@ class genetic:
         Returns: None
 
         """
-        self.fitness_func = self.sum_obj_functions - self.objective_function_value
+        self.fitness_func = (self.sum_input_data + 1) - self.objective_function_value
 
         print(self.fitness_func)
 
@@ -210,7 +211,7 @@ class genetic:
                 self.mutated_indexes.append(i)
                 # print(f"mutate chrome {i}, gene {position} to machine {machine}")
 
-    # TODO: fix representation
+    # TODO: check how to calculate the probabilities
     def calc_probabilities(self, population):
         """
         calculating probabilities for current population_sample-
@@ -281,21 +282,26 @@ class genetic:
                 odd_machines.append(machine)
 
         pairs =[]
-        for i in range(0,len(odd_machines),2):
+        for i in range(0,len(odd_machines), 2):
             pairs.append((odd_machines[i], odd_machines[i+1]))
 
         for i, j in pairs:
-            if decoded_chromosome[i] > decoded_chromosome[j]:
+            print(i,j)
+            print(decoded_chromosome[i])
+            print(decoded_chromosome[j])
+            if decoded_chromosome[j] > decoded_chromosome[i]:
 
 
+                masked = np.ma.MaskedArray(self.input_data, chromosome != j)
+                index_min_job = np.ma.argmin(masked)
+                chromosome[index_min_job] = i
+
+            else:
                 masked = np.ma.MaskedArray(self.input_data, chromosome != i)
                 index_min_job = np.ma.argmin(masked)
                 chromosome[index_min_job] = j
 
-            else:
-                masked = np.ma.MaskedArray(self.input_data, chromosome != j)
-                index_min_job = np.ma.argmin(masked)
-                chromosome[index_min_job] = i
+        print(chromosome)
 
         # todo delete below
         uniques, frequencies = np.unique(chromosome, return_counts=True)

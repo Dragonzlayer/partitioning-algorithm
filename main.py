@@ -92,9 +92,108 @@ def main():
     # receive input from user and draw process times
     # jobs_process_time, number_of_machines = get_parameters(CASE=1)
 
-    jobs_process_time = [1,2,3,4,5,6,7,8,9,10]
-    number_of_machines = 2
+    jobs_process_time = []
 
+    number_of_machines = 4
+
+    # 14 jobs 4 machines
+
+    jobs_process_time=[3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4]
+
+
+    """
+    # 20 jobs 4 machines
+        number_of_machines = 4
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(5):
+            jobs_dict[str(i)] = 5
+        for i in range(5, 15):
+            jobs_dict[str(i)] = 6
+
+        jobs_dict[str(15)] = 10
+
+        jobs_dict[str(16)] = 11
+
+        for i in range(17, 20):
+            jobs_dict[str(i)] = 12
+
+
+
+    # 60 jobs 16 machines
+    if case_id == '16_60':
+        number_of_machines = 16
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(10):
+            jobs_dict[str(i)] = 2
+
+        for i in range(10, 40):
+            jobs_dict[str(i)] = 3
+
+        for i in range(40, 50):
+            jobs_dict[str(i)] = 4
+
+        for i in range(50, 60):
+            jobs_dict[str(i)] = 6
+
+    # 60 jobs 6 machines
+    if case_id == '6_60':
+        number_of_machines = 6
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i in range(10):
+            jobs_dict[str(i)] = 2
+
+        for i in range(10, 40):
+            jobs_dict[str(i)] = 3
+
+        for i in range(40, 50):
+            jobs_dict[str(i)] = 4
+
+        for i in range(50, 60):
+            jobs_dict[str(i)] = 6
+
+    # 12 jobs 4 machines
+    if case_id == '4_12':
+        number_of_machines = 4
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i, item in enumerate(
+                [3, 29, 30, 31, 32, 33, 34, 35, 36, 37, 57, 58, 59, 60, 61, 72, 73, 74, 75, 98, 99, 100]):
+            jobs_dict[str(i)] = item
+
+    # 12 jobs 2 machines
+    if case_id == '2_12':
+        number_of_machines = 2
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i, item in enumerate([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 33]):
+            jobs_dict[str(i)] = item
+
+    # 8 jobs 4 machines
+    if case_id == '4_8':
+        number_of_machines = 4
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i, item in enumerate([2, 2, 3, 3, 3, 3, 4, 4]):
+            jobs_dict[str(i)] = item
+
+    # 14 jobs 4 machines
+    if case_id == '4_14':
+        number_of_machines = 4
+        for i in range(number_of_machines):
+            dict[str(i)] = {}
+
+        for i, item in enumerate([3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4]):
+            jobs_dict[str(i)] = item
+    """
 
     # initializing: putting all jobs in the first machine
     # initial_state = [{} for machine in range(number_of_machines)]
@@ -111,11 +210,12 @@ def main():
     # for i, k in enumerate(initial_state):
     #    print("machine nr. ", i, ":", k)
 
-    if RUN_LS:
-        run_ls(initial_state)
+#    if RUN_LS:
+#       run_ls(initial_state)
 
-    if RUN_BB:
-        pass # TODO
+#    if RUN_BB:
+#        pass # TODO
+
 
     if RUN_GENETIC:
         run_genetic(jobs_process_time, number_of_machines)

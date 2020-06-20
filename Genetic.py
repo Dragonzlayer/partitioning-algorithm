@@ -1,34 +1,20 @@
-from Timer import timer
-from copy import deepcopy
-from math import ceil
-import numpy as np
-from heapq import nsmallest
-import sys
 import random
-from itertools import combinations
+import sys
+from copy import deepcopy
+from datetime import datetime
+
 import matplotlib.pyplot as plt
-import seaborn as sns
+import numpy as np
 from scipy.special import softmax
 
-""""
-Pseudocode version 1:
-
-    Input: Randomized 2n jobs and m Machines
-    
-    Initialization: To start with: create 100 chromosomes 
-        How to create chromosome: While jobs != empty:
-                                    1: draw one job from the input
-                                    2: draw another job (a partner for the first job) - both chosen randomly - uniform distribution
-                                    3 draw a machine for this 2 jobs (treat them as a 'unit')
-                                    4: back to stage 1
-    
-
-"""
 np.random.seed(0)
 random.seed(1)
-num_of_chromosomes = 40
-XO_parameter = 9  # parameter that stores the numbers of chromosomes we'll perform XO over
-num_generations = 1000  # just initialization - change when necessary
+np.set_printoptions(threshold=sys.maxsize)
+num_of_chromosomes = 1000
+XO_parameter = 10  # parameter that stores the numbers of chromosomes we'll perform XO over
+num_generations = 50000 # just initialization - change when necessary
+print_rate = 10000  # print to file and plot each this many generations
+methods = ["fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
 
 
 class genetic:
@@ -54,6 +40,10 @@ class genetic:
         self.best_population = deepcopy(self.population_sample)
         self.best_objective_function_mean = float('inf')
 
+        the_time = datetime.now().strftime("%d%m%Y_%H%M%S")
+        self.file_path = f"Genetic_output/genetic_output_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}.txt"
+        self.img_path = f"Genetic_output/Obj_vs_Gen_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}"
+
     def action(self):
         """
         Performing Genetic algo approach
@@ -76,56 +66,118 @@ class genetic:
         # print(self.population_sample)
         # for indx in range(self.num_of_chromosomes):
         #     self.correction(np.array([1,1,1,1,1,0,0,0,0,0]))n
+        full_res = []
 
-        print("Starting Genetic")
-        print(f"{self.input_data}")
-        self.create_population()
-        print("Population:\n", self.population_sample)
-        res = []
-        for generation in range(num_generations):
-            print(f" ------------ New {generation=} ------------")
-            self.mutated_indexes.clear()
+        for method in methods:
 
-            self.objective_func_calc()
-            # print(self.objective_function_value)
+            # const seed
+            np.random.seed(0)
+            random.seed(1)
 
-            self.fitness_func_calc()
-            # print(self.fitness_func)
+            print("Starting Genetic")
+            print(f"{self.input_data}")
 
-            self.calc_probabilities()
-            # print(self.probabilities)
+            self.create_population()
+            print("Population:\n", self.population_sample)
 
-            self.elitism()
-            # self.elitism()
-            # self.elitism()
-            # print(self.population_sample[self.mutated_indexes])
-            # print(self.decoding(self.population_sample[self.mutated_indexes][0]))
+            res = []
+            for generation in range(num_generations + 1):
 
-            self.perform_Mutation()
-            # print(self.population_sample[self.mutated_indexes])
+                self.action_iteration(method)
 
-            # print("XO")
-            self.choose_parents_for_XO()
-            # print(self.XO_partners)
+                mean_obj_func = self.calc_mean_and_update_best()
+                res.append(mean_obj_func)
 
-            for indx in range(XO_parameter):
-                # TODO: how to choose them using fitnees function?
-                chrome1=self.XO_partners[indx, 0]
-                chrome2=self.XO_partners[indx, 1]
-                if chrome1 != chrome2:
-                    self.perform_XO(self.XO_partners[indx, 0], self.XO_partners[indx, 1])
+                if generation % print_rate == 0:
+                    self.write_to_file(generation, method)
+                    # self.plot_results(res, method, is_full=False)
 
-            mean_obj_func = self.objective_function_value.mean()
-            res.append(mean_obj_func)
+            print(self.best_population)
+            print(self.best_objective_function_mean)
 
-            if mean_obj_func < self.best_objective_function_mean:
-                self.best_objective_function_mean = mean_obj_func
-                self.best_population = deepcopy(self.population_sample)
+            full_res.append(res)
 
-        print(self.best_population)
-        print(self.best_objective_function_mean)
-        sns.set()
-        plt.plot(res)
+        self.plot_results(full_res, methods, is_full=True)
+
+    def calc_mean_and_update_best(self):
+        mean_obj_func = self.objective_function_value.mean()
+
+        if mean_obj_func < self.best_objective_function_mean:
+            self.best_objective_function_mean = mean_obj_func
+            self.best_population = deepcopy(self.population_sample)
+
+        return mean_obj_func
+
+    def action_iteration(self, method):
+        self.mutated_indexes.clear()
+
+        self.objective_func_calc()
+        # print(self.objective_function_value)
+
+        self.fitness_func_calc()
+        # print(self.fitness_func)
+
+        self.calc_probabilities(method)
+        # print(self.probabilities)
+
+        self.elitism()
+        # self.elitism()
+        # self.elitism()
+        # print(self.population_sample[self.mutated_indexes])
+        # print(self.decoding(self.population_sample[self.mutated_indexes][0]))
+
+        self.perform_Mutation()
+        # print(self.population_sample[self.mutated_indexes])
+
+        # print("XO")
+        self.choose_parents_for_XO()
+        # print(self.XO_partners)
+
+        for indx in range(XO_parameter):
+            # TODO: how to choose them using fitnees function?
+            chrome1 = self.XO_partners[indx, 0]
+            chrome2 = self.XO_partners[indx, 1]
+            if chrome1 != chrome2:
+                self.perform_XO(self.XO_partners[indx, 0], self.XO_partners[indx, 1])
+
+    def write_to_file(self, generation, method):
+        with open(self.file_path, "a") as f:
+            print(f" ------------------------------- End of generation={generation}, method={method} -----------------------------", file=f)
+
+            print("Population:", file=f)
+            for i in range(self.num_of_chromosomes):
+                print(f"Chrome {i}:\n", self.population_sample[i], file=f)
+
+            print(f"Fitness:\n{self.fitness_func}", file=f)
+            print(f"Probabilities:\n{self.probabilities}", file=f)
+            print(f"XO Partners:\n{self.XO_partners}", file=f)
+            print(f"Objective Function Values:\n{self.objective_function_value}", file=f)
+            print(f"Min object function value:\n{min(self.objective_function_value)}", file=f)
+
+    def plot_results(self, res, methods, is_full):
+        plt.figure(figsize=(10, 6))
+        if is_full:
+            for inx, method in enumerate(methods):
+                plt.plot(res[inx], label=method)
+        else:
+            plt.plot(res, label=methods)
+        plt.xlabel("Generations")
+        plt.ylabel("Mean objective function value")
+        plt.title("Mean objective function value per Generation")
+        plt.legend(loc='best')
+        col_labels = ['Value']
+        row_labels = ['# Genes', '# Machines', '# Chromosomes', '#XO', 'Sum Total jobs', 'Mean fitness']
+        table_vals = [[self.number_of_genes], [self.number_of_machines], [self.num_of_chromosomes],
+                      [XO_parameter],
+                      [sum(self.input_data)], [self.fitness_func.sum() / self.num_of_chromosomes]]
+
+        # the rectangle is where I want to place the table
+        plt.table(cellText=table_vals,
+                  colWidths=[0.1] * 3,
+                  rowLabels=row_labels,
+                  colLabels=col_labels,
+                  loc='best')
+        plt.savefig(self.img_path)
         plt.show()
 
     def create_population(self):
@@ -187,11 +239,10 @@ class genetic:
         Updates Objective function value - max process time of every chromosome
 
         """
-        print("calculating objective function value:")
+        # print("calculating objective function value:")
 
         for i in range(self.num_of_chromosomes):
             self.objective_function_value[i] = np.max(self.decoding(self.population_sample[i]))
-
 
     # TODO: I've added 1 so that no chromosome will receive the value '0' - check if OK or what/how to fix
     def fitness_func_calc(self):
@@ -202,7 +253,7 @@ class genetic:
         Returns: None
 
         """
-        print("Calculating fitness function:")
+        # print("Calculating fitness function:")
 
         self.fitness_func = self.sum_input_data - self.objective_function_value
 
@@ -220,7 +271,8 @@ class genetic:
         available_to_xo_indexes = list(set(range(num_of_chromosomes)) - set(self.mutated_indexes))
         available_to_xo_indexes.sort()
         for i in range(XO_parameter):  # TODO: check if it's actually working
-            x = np.array(random.choices(available_to_xo_indexes, weights=self.probabilities[available_to_xo_indexes], k=2))
+            x = np.array(
+                random.choices(available_to_xo_indexes, weights=self.probabilities[available_to_xo_indexes], k=2))
             self.XO_partners[i] = x
 
     # TODO: check if working, and if giving 2 chromosomes is neccessary
@@ -262,7 +314,7 @@ class genetic:
         """
         mutation_prob = random.uniform(0.001, 0.05)
 
-        print("Performimg Mutation with mutation probability:", mutation_prob)
+        # print("Performimg Mutation with mutation probability:", mutation_prob)
 
         for i in range(self.num_of_chromosomes):
             # Don't perform mutation on elitist chromosome
@@ -280,18 +332,27 @@ class genetic:
                     # print(f"mutate chrome {i}, gene {position} to machine {machine}")
 
     # TODO: check how to calculate the probabilities
-    def calc_probabilities(self):
+    def calc_probabilities(self, method):
         """
         calculating probabilities for current population_sample-
         i.e - chromosome index, the chromosome itself, x_i (check again), choosing probability
         Returns: Matrix representation of current population_sample's data
 
         """
-        print("Calculating probabilities:")
+        # print("Calculating probabilities:")
 
-        # self.probabilities = self.fitness_func / np.sum(self.fitness_func)
-        self.probabilities = self.objective_function_value**2 / np.sum(self.objective_function_value**2)
-        # self.probabilities = softmax(self.objective_function_value)
+        if method == 'fitness':
+            self.probabilities = self.fitness_func / np.sum(self.fitness_func)
+        elif method == 'objective':
+            self.probabilities = self.objective_function_value / np.sum(self.objective_function_value)
+        elif method == 'objective_softmax':
+            self.probabilities = softmax(self.objective_function_value)
+        elif method == 'objective_squared':
+            self.probabilities = self.objective_function_value ** 2 / np.sum(self.objective_function_value ** 2)
+        elif method == 'fitness_squared':
+            self.probabilities = self.fitness_func ** 2 / np.sum(self.fitness_func ** 2)
+        elif method == 'fitness_softmax':
+            self.probabilities = softmax(self.fitness_func)
 
         # for i in range(self.num_of_chromosomes):
         # print(
@@ -307,7 +368,7 @@ class genetic:
         Returns: None
 
         """
-        print("Elitism")
+        # print("Elitism")
         index_for_elitism = np.argmax(self.fitness_func)
         self.mutated_indexes.append(index_for_elitism)
 

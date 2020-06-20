@@ -12,7 +12,6 @@ nodes = 1
 
 
 # number_of_jobs = 10
-# TODO: fix upper bound calculation
 
 class NoValidState(Exception):
     """Raised when the input value is too small"""
@@ -21,7 +20,25 @@ class NoValidState(Exception):
 
 class B_B:
     def __init__(self, input_state):
-        self.number_of_machines = len(input_state) - 1
+
+        """
+        Full Implementation of Branch & Bound Algorithm as defined
+
+        Example Usage: # TODO: example usage & fix & clean main
+            local_searcher = LocalSearch(state)
+            local_searcher.search()
+
+        Results can be found at: # TODO: fix result can be found at
+            local_searcher.curr_state
+            local_searcher.sum_processing_times_per_machine
+            local_searcher.sum_squared_processing_times
+
+        Args:
+            input_state: list of dictionaries of machine's indexes, the last dictionary (indexed '-1') holds all the
+            input's jobs in the following format: (job_id : job_val)
+        """
+
+        self.number_of_machines = len(input_state) - 1  # the last dictionary only holds the jobs from the input
         self.basic_lower_bound = ceil(sum(input_state['-1'].values()) / self.number_of_machines)
         self.max_job = max(input_state['-1'].values())
         self.input_state = input_state
@@ -35,8 +52,22 @@ class B_B:
     def _undo_update(self, state, i):
         self.try_pop_and_move(state, source_machine=i, destination_machine=-1)
 
+
     @timer
     def DFS_wrapper(self):
+
+        """
+        Performing prologue tasks for B&B:
+            Calculating lower and upper bound for the root.
+            Printing the initial bounds
+            Calculating and printing the first partition
+
+        Then send it to self.DFS(self.input_state, 1) method to perform the algorithm for the rest of the tree,
+        with level = 1 (As we've done level = 0 ,i.e - the root)
+
+        Returns: None
+
+        """
         # lower bound for the root is a bit different - needs to include also max job
         # the first upper bound is the trivial one - sum of all jobs
         input_state_copy = deepcopy(self.input_state)
@@ -46,13 +77,8 @@ class B_B:
         except NoValidState:
             print("Illegal input. No Valid State")
             raise NoValidState
-        # print("temp upper:", temp_upper, "temp lower:", temp_lower)
 
-       # number_of_jobs = len(self.input_state['-1'].values())
-       # lcm_val = np.lcm(2, self.number_of_machines)
-       # num_jobs_for_min = number_of_jobs + lcm_val - number_of_jobs % lcm_val
-       # new_lower = min(self.input_state['-1'].values()) * num_jobs_for_min / self.number_of_machines
-        self.basic_lower_bound = max(temp_lower, self.max_job) #new_lower
+        self.basic_lower_bound = max(temp_lower, self.max_job)
 
         upper = ceil(sum(self.input_state['-1'].values()))
         self.current_obj_func_value = upper
@@ -68,6 +94,16 @@ class B_B:
         self.DFS(self.input_state, 1)
 
     def DFS(self, input_state, level):
+        """
+
+        Args:
+            input_state: list of dictionaries representing the current state, aka - the machines with their according jobs,
+                         and the remaining jobs after the partition from the previous level.
+            level: the current tree level we're working on
+
+        Returns: None
+
+        """
         # print("Went down level")
         # print(state)
         level += 1
@@ -198,13 +234,23 @@ def second_smallest(numbers):
 
 
 def run_with_params(dict_param_num):
+    """
+    Args:
+        dict_param_num: list of dictionaries representing the machines, and 1 dictionary that stores the jobs from input.
+
+    Returns: None
+    """
+
+    # printing initial state, as given from the input
     print("*********************************************** New Run ***********************************************")
     print("Number of machines: ", len(dict_param_num)-1)
     print("Total number of jobs:", len(dict_param_num['-1']))
-    B_B_RUN = B_B(dict_param_num)
+    B_B_RUN = B_B(dict_param_num) # TODO: check what the hell
 
+    # Performing the first step of B&B algo, and then send it to another function to run the whole algorithm
     B_B_RUN.DFS_wrapper()
 
+    # Printing final state after B&B has finishd its run
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Final State ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print(f"In total rendered {nodes=}")
     sum_each_machine = B_B_RUN.machines_sum(B_B_RUN.leading_partition)
@@ -220,9 +266,14 @@ def run_with_params(dict_param_num):
             print("Machine", key, " jobs:", list(machine.values()))
 
 def create_dict(case_id):
-    # for case_num in range(1, 2):
-    # jobs_dict, number_of_machines = get_parameters(13)
-    # print(f"{case_id}")
+    """
+    Args:
+        case_id: id of the current's input case we're performing the algorithm over.
+
+    Returns: list of dictionaries s.t there are number_of_machines empty dictionaries
+             and 1 dictionary indexed '-1' that stores the jobs from input.
+    """
+
     jobs_dict = {}
     dict = {}
     if case_id == '3_14_60':

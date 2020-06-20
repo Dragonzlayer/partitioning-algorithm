@@ -10,10 +10,10 @@ from scipy.special import softmax
 np.random.seed(0)
 random.seed(1)
 np.set_printoptions(threshold=sys.maxsize)
-num_of_chromosomes = 1000
-XO_parameter = 10  # parameter that stores the numbers of chromosomes we'll perform XO over
-num_generations = 50000 # just initialization - change when necessary
-print_rate = 10000  # print to file and plot each this many generations
+num_of_chromosomes = 100
+XO_parameter = 49  # parameter that stores the numbers of chromosomes we'll perform XO over
+num_generations = 20000 # just initialization - change when necessary
+print_rate = 5000  # print to file and plot each this many generations
 methods = ["fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
 
 
@@ -255,7 +255,11 @@ class genetic:
         """
         # print("Calculating fitness function:")
 
-        self.fitness_func = self.sum_input_data - self.objective_function_value
+        #self.fitness_func = self.sum_input_data - self.objective_function_value
+
+        #trying new fitness func:
+        mean_obj_func = self.objective_function_value.mean()
+        self.fitness_func =1- (1/self.objective_function_value - mean_obj_func +2)
 
         # print(self.fitness_func)
 

@@ -47,6 +47,18 @@ class B_B:
         self.all_jobs_sum = sum(input_state['-1'].values())
 
     def _update_state(self, state, i):
+        """
+        The function updates the state by sending the according data to self.try_pop_and_move(state, source_machine=-1, destination_machine=i)
+        function
+        Args:
+            state: copy of the current input_state (i.e - the machines with their according jobs,
+                         and the remaining jobs after the partition from the previous level)
+            i: son number i. of the node we're currently working on (each son represents a machine in which we'll move
+               a current job to)
+
+        Returns: None
+
+        """
         self.try_pop_and_move(state, source_machine=-1, destination_machine=i)
 
     def _undo_update(self, state, i):
@@ -95,21 +107,30 @@ class B_B:
 
     def DFS(self, input_state, level):
         """
+        Performing B&B algo using DFS order:
+            it copies the current input_state and for each son of the current node (i.e - possible machine to move job to)
+            moving the current job and update necessary values, if it cannot create a new partition
+            (i.e - it will create an invalid partition)- raises an exception and will move on and calculate another possibilities.
+            if at any point we find a better partition and bounds - we update the current leading partition and its values.
+            if at any point lower bound == upper bound, we truncate this node and don't create its sub-tree.
+             we continue calculating in DFS order.
 
         Args:
-            input_state: list of dictionaries representing the current state, aka - the machines with their according jobs,
+            input_state: list of dictionaries representing the current state, i.e - the machines with their according jobs,
                          and the remaining jobs after the partition from the previous level.
             level: the current tree level we're working on
 
         Returns: None
 
         """
-        # print("Went down level")
-        # print(state)
+        # update current level
         level += 1
+
+        # if there are no jobs left - return and stop the program, as we've exhausted the possible partitions
         if not input_state['-1']:
             return
 
+        # copy the input_state so we can calculate multiple possible partitions without changing the data
         state = deepcopy(input_state)
 
         for i in range(self.number_of_machines):
@@ -158,18 +179,31 @@ class B_B:
             # truncate the node and don't create a subtree for it.
             # keep searching in his adjacent nodes (not in his subtree)
             if lower == upper:
-                # print(f"{lower=}=upper. {self.leading_partition=}")
                 self._undo_update(state, i)
                 continue
 
             # print(f"{self.leading_partition=}")
             self.DFS(state, level)
 
+            # when going all the way down in a sub-tree's node, search its adjacent nodes with the appropriate data
             self._undo_update(state, i)
 
+# TODO: check if more documentation is needed
     def _bounds_calc(self, input_state):
+        """
+        Calculating lower and upper bounds for the current input_state, as well as current partition using LPT algorithm
+        * calculates special lower bound case when there are 3 machines, as seen in Lecture's slides
+
+        Args:
+            input_state: list of dictionaries representing the current state - i.e the machines with their according jobs,
+                         and the remaining jobs after the partition from the previous level.
+
+        Returns: lower and upper bounds, partition created by LPT algorithm
+        """
         # calculates sum of jobs for each machine
         sums = self.machines_sum(input_state)
+
+        # special lower bound case when there are 3 machines
         if self.number_of_machines == 3:
             x = input_state['-1'].values()
             if len(x) > 1:
@@ -181,17 +215,33 @@ class B_B:
             special_case_lower = min(Arbitrary_sum + min_job1 + min_job2, ceil((self.all_jobs_sum - Arbitrary_sum) / 2))
             lower = max(self.basic_lower_bound, max(sums), special_case_lower)
         else:
+            # if there are not 3 machine - calculate 'regular' lower bound
             lower = max(self.basic_lower_bound, max(sums))
 
+        # copy the input state, so we don't change the data
         temp_input_state = deepcopy(input_state)
 
+        # calculating upper bound and partition using LPT
         try:
             upper, current_partition = self._LPT(temp_input_state)
+
+        # if the state is too small - raise exception
         except NoValidState:
             raise NoValidState
+
         return lower, upper, current_partition
 
     def _LPT(self, LPT_state):
+        """
+        creating partition using LPT algorithm, and sets the upper bound to be the maximal value of all
+        machines in this partition.
+
+        Args:
+            LPT_state: copy of the input_state
+
+        Returns: upper bound and partition created by LPT algo
+        """
+
         # balancing machines with odd number of jobs - s.t all machines now will have an even number of jobs
         for i in range(self.number_of_machines):
             if len(LPT_state[str(i)]) % 2 != 0:
@@ -200,6 +250,7 @@ class B_B:
                     # the partition is illegal
                     raise NoValidState
 
+        # Try to move and assign jobs - as long as there are jobs left
         while LPT_state['-1']:
             sum_each_machine = self.machines_sum(LPT_state)
             min_machine = np.argmin(sum_each_machine)
@@ -207,13 +258,21 @@ class B_B:
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
             self.try_pop_and_move(LPT_state, source_machine=-1, destination_machine=min_machine)
 
-        # print(f"{LPT_state=}")
-
+        # calculating upper bound by summing values of all machines, and setting the upper bound to be the maximal value
         sum_each_machine = self.machines_sum(LPT_state)
         upper = max(sum_each_machine)
+
         return upper, LPT_state
 
     def machines_sum(self, state):
+        """
+        summing the values of each machine in state
+
+        Args:
+            state: list of dictionaries representing the current state - i.e the machines with their according jobs
+
+        Returns: list with sum of each machine, in the according position
+        """
         sum_each_machine = [0] * self.number_of_machines
         for i in range(self.number_of_machines):
             sum_each_machine[i] = sum(state[str(i)].values())
@@ -221,6 +280,22 @@ class B_B:
         return sum_each_machine
 
     def try_pop_and_move(self, state, source_machine, destination_machine):
+        """
+        The function will try to move jobs from source machine to target machine,
+        if the transfer was successful - will return True, and if not - returns False (this happens if there
+        are no jobs left in source machine)
+
+        Args:
+            state: current input_state (i.e - the machines with their according jobs,
+                   and the remaining jobs after the partition from the previous level)
+
+            source_machine: The machine we'll try to move jobs from - this will be the machine indexed as '-1',
+                            i.e - the machine that contains the remaining jobs
+
+            destination_machine: The machine we'll try to move the jobs to
+
+        Returns: boolean value True/False - if the transfer was successful or not
+        """
 
         if state[str(source_machine)]:
             job_id, job_val = state[str(source_machine)].popitem()
@@ -228,13 +303,15 @@ class B_B:
             return True
         return False
 
-
+# TODO: decide what to do with that shit
 def second_smallest(numbers):
     return nsmallest(2, numbers)[-1]
 
 
 def run_with_params(dict_param_num):
     """
+    Start the run of the algorithm and print the data accordingly
+
     Args:
         dict_param_num: list of dictionaries representing the machines, and 1 dictionary that stores the jobs from input.
 
@@ -267,6 +344,9 @@ def run_with_params(dict_param_num):
 
 def create_dict(case_id):
     """
+    According each case, create list of dictionaries representing the machines, and dictionary
+    that stores the remaining jobs
+
     Args:
         case_id: id of the current's input case we're performing the algorithm over.
 

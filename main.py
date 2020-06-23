@@ -48,6 +48,7 @@ def transfer_jobs(curr_state, search_space):
         
     return curr_state
 """
+import random
 import sys
 
 import numpy as np
@@ -94,12 +95,14 @@ def main():
 
     jobs_process_time = []
 
-    number_of_machines = 4
+    number_of_machines = 10
 
     # 14 jobs 4 machines
 
-    jobs_process_time=[3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4]
-
+    # jobs_process_time=[3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4]
+    # jobs_process_time=[i for i in range(1,1001)]
+    # random.shuffle(jobs_process_time)
+    jobs_process_time = [random.choice(range(10, 41)) for _ in range(500)]
 
     """
     # 20 jobs 4 machines

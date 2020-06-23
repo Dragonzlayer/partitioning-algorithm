@@ -419,13 +419,9 @@ class genetic:
         Returns: Array that stores the sum process time of each machine in the chromosome
 
         """
-        sum_each_machine = np.zeros(self.number_of_machines)
 
-        for i in range(len(chromosome)):
-            sum_each_machine[chromosome[i]] += self.input_data[i]
+        return np.bincount(chromosome, weights=self.input_data)
 
-
-        return sum_each_machine
 
     # TODO: FINISH
     def correction(self, chromosome):

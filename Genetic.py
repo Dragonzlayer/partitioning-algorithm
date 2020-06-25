@@ -15,7 +15,7 @@ num_of_chromosomes = 100
 XO_parameter = 49  # parameter that stores the numbers of chromosomes we'll perform XO over
 num_generations = 200003 # just initialization - change when necessary
 print_rate = 50000  # print to file and plot each this many generations
-methods = ['fitness_sqrt']  #"fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
+methods = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']# ['fitness_sqrt']  #"fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
 
 
 class genetic:
@@ -40,10 +40,11 @@ class genetic:
         self.XO_partners = -1 * np.ones((XO_parameter, 2), dtype=int)
         self.best_population = deepcopy(self.population_sample)
         self.best_objective_function_mean = float('inf')
+        self.sum_to_machines_avg = np.sum(self.input_data)/self.number_of_machines
 
         the_time = datetime.now().strftime("%d%m%Y_%H%M%S")
-        self.file_path = f"Genetic_output/genetic_output_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}.txt"
-        self.img_path = f"Genetic_output/Obj_vs_Gen_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}"
+        self.file_path = f"Genetic_output_final/genetic_output_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}.txt"
+        self.img_path = f"Genetic_output_final/Obj_vs_Gen_{number_of_machines}machines_{self.number_of_genes}genes_generations{num_generations}_{the_time}"
 
     def action(self):
         """
@@ -87,8 +88,8 @@ class genetic:
                 res.append(mean_obj_func)
                 print(f"gen {generation} complete")
 
-                if generation % print_rate < 4:
-                    print(f"gen {generation} complete")
+                if generation % print_rate < 2:
+                    # print(f"gen {generation} complete")
                     # if generation < num_generations:
                     # for i in range(4):
                     self.write_to_file(generation, method)
@@ -388,10 +389,41 @@ class genetic:
         elif method == 'fitness_sqrt':
             self.probabilities = np.sqrt(self.fitness_func)
 
+        elif method == '1':
+            self.probabilities = 1/self.objective_function_value
+
+        elif method == '2':
+            self.probabilities = 1/self.objective_function_value**2
+
+        elif method == '3':
+            self.probabilities = 1 / np.sqrt(self.objective_function_value)
+
+        elif method == '4':
+            self.probabilities = 1 / self.objective_function_value ** 3
+
+        elif method == '5':
+            self.probabilities = 1 / (2*self.objective_function_value - self.sum_to_machines_avg)
+
+        elif method == '6':
+            self.probabilities = 1 / (self.objective_function_value - self.sum_to_machines_avg + 1)
+
+        elif method == '7':
+            self.probabilities = 1 / (3*self.objective_function_value - 2*self.sum_to_machines_avg)
+
+        elif method == '8':
+            self.probabilities = 1 / (self.objective_function_value - self.sum_to_machines_avg + 1)**2
+
+        elif method == '9':
+            self.probabilities = 1 / (self.objective_function_value - self.sum_to_machines_avg + 1) ** 3
+
+        elif method == '10':
+            self.probabilities = 1 / np.sqrt(self.objective_function_value - self.sum_to_machines_avg + 1)
+
         # Normalized probabilities
         self.probabilities /= sum(self.probabilities)
 
-        # for i in range(self.num_of_chromosomes):
+
+# for i in range(self.num_of_chromosomes):
         # print(
         #    f'ID {i}: {population[i]} function value: {self.objective_function_value[i]} choosing prob:{round(self.probabilities[i], 6)}')
         # population_data[i] =[f'chromosome index: {i} chromosome: {population_sample[i]} function value: {self.objective_function_value[i]} choosing probability:{self.objective_function_value[i] / sum_obj_functions}']

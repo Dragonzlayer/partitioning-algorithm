@@ -373,8 +373,7 @@ class genetic:
         mutation_prob = random.uniform(0.001, 0.05)
         available_to_mut_indexes = list(range(self.num_of_chromosomes))
 
-        # print("Performimg Mutation with mutation probability:", mutation_prob)
-        for i in range(self.num_of_chromosomes):  # TODO: check if it's actually working
+        for i in range(self.num_of_chromosomes):
             mut_index = np.array(random.choices(available_to_mut_indexes, weights=self.probabilities[available_to_mut_indexes], k=1))[0]
 
             # draw random between 0 and 1
@@ -386,30 +385,33 @@ class genetic:
                 self.population_sample[mut_index][position2] = self.population_sample[mut_index][position1]
                 self.population_sample[mut_index][position1] = temp
                 self.mutated_indexes.append(mut_index)
-                # print(f"mutate chrome {i}, gene {position} to machine {machine}")
 
-    # TODO: check how to calculate the probabilities
     def calc_probabilities(self, method):
         """
-        calculating probabilities for current population_sample-
-        i.e - chromosome index, the chromosome itself, x_i (check again), choosing probability
+        calculating probabilities for current population_sample according to given fitness function method-
+        i.e - chromosome index, the chromosome itself, x_i , choosing probability
         Returns: Matrix representation of current population_sample's data
 
         """
-        # print("Calculating probabilities:")
 
         if method == 'fitness':
             self.probabilities = self.fitness_func / np.sum(self.fitness_func)
+
         elif method == 'objective':
             self.probabilities = self.objective_function_value / np.sum(self.objective_function_value)
+
         elif method == 'objective_softmax':
             self.probabilities = softmax(self.objective_function_value)
+
         elif method == 'objective_squared':
             self.probabilities = self.objective_function_value ** 2 / np.sum(self.objective_function_value ** 2)
+
         elif method == 'fitness_squared':
             self.probabilities = self.fitness_func ** 2 / np.sum(self.fitness_func ** 2)
+
         elif method == 'fitness_softmax':
             self.probabilities = softmax(self.fitness_func)
+
         elif method == 'fitness_sqrt':
             self.probabilities = np.sqrt(self.fitness_func)
 
@@ -446,12 +448,6 @@ class genetic:
         # Normalized probabilities
         self.probabilities /= sum(self.probabilities)
 
-
-# for i in range(self.num_of_chromosomes):
-        # print(
-        #    f'ID {i}: {population[i]} function value: {self.objective_function_value[i]} choosing prob:{round(self.probabilities[i], 6)}')
-        # population_data[i] =[f'chromosome index: {i} chromosome: {population_sample[i]} function value: {self.objective_function_value[i]} choosing probability:{self.objective_function_value[i] / sum_obj_functions}']
-
     def elitism(self):
         """
         Choose the chromosome with the highest fitness function value
@@ -461,7 +457,6 @@ class genetic:
         Returns: None
 
         """
-        # print("Elitism")
         index_for_elitism = np.argmax(self.fitness_func)
         self.mutated_indexes.append(index_for_elitism)
 
@@ -478,39 +473,44 @@ class genetic:
 
         return np.bincount(chromosome, weights=self.input_data)
 
-
-    # TODO: FINISH
     def correction(self, chromosome):
         """
-        to correct invalid chromosomes from XO
-        Args:
-            chromosome:
+        Correct invalid chromosomes from XO:
+        Doing it by counting how many machines has an odd number of jobs, pair those machines together, and
+        for each pair moving jobs from the machine with the higher sum of jobs to the second machine
+        s.t we'll get an even partition.
 
-        Returns:
+        Args:
+            chromosome: Chromosome needed a correction
+
+        Returns: None
 
         """
         decoded_chromosome = self.decoding(chromosome)
-        # stores the unique machines values in ascending order
-        # stores the frequency for each machine - i.e how many jobs are assigned to each machine
 
         # array that stores 0 if the machine with the current index has even number of jobs - and 1 if it's odd
         # odd_even = np.zeros(self.number_of_machines)
+
         # uniques stores uniques machine values
         # frequencies stores how many jobs assigned to each machine in the corresponding position in the array
         uniques, frequencies = np.unique(chromosome, return_counts=True)
 
+        # Counting how many machines has odd number of jobs
         odd_machines = []
         for machine, count in zip(uniques, frequencies):
             if count % 2 == 1:
                 odd_machines.append(machine)
 
+        # pairs machines with odd number of jobs, so we can move jobs from one machine to the other
+        # s.t after the moving each machine will have an even number of jobs
         pairs = []
         for i in range(0, len(odd_machines), 2):
             pairs.append((odd_machines[i], odd_machines[i + 1]))
 
+        # For each pair of machines, move jobs from the machines with higher sum of jobs
+        # so that afterwards each machine will have an even number of jobs, and make the partition a bit more balanced
         for i, j in pairs:
-            # print(decoded_chromosome[i])
-            # print(decoded_chromosome[j])
+
             if decoded_chromosome[j] > decoded_chromosome[i]:
 
                 masked = np.ma.MaskedArray(self.input_data, chromosome != j)
@@ -522,21 +522,4 @@ class genetic:
                 index_min_job = np.ma.argmin(masked)
                 chromosome[index_min_job] = j
 
-        # print(chromosome)
 
-        # # todo delete below
-        # uniques, frequencies = np.unique(chromosome, return_counts=True)
-        # odd_machines = []
-        # for machine, count in zip(uniques, frequencies):
-        #     if count % 2 == 1:
-        #         odd_machines.append(machine)
-        # if odd_machines:
-        #     print("ERRRORRRRR")
-        # else:
-        #     print("NO ERRORRRR")
-
-        # for index in odd_even:
-        # more from machine with higher sum the job with minimal val to the other machine in the pair
-
-# TODO: when there's more than 2 machines - check what to do when some chromosomes don't assign jobs to a certain machine
-# TODO decoding method to visually see the partition

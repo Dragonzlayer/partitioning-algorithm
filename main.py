@@ -62,7 +62,8 @@ DEBUG = False  # Switch to True for prints during the run
 RUN_LS = False
 RUN_BB = False
 RUN_GENETIC = True
-
+np.random.seed(4)
+random.seed(5)
 def run_ls(state):
     # initialize LocalSearch class with initial state
     local_searcher = LocalSearch(state)
@@ -103,6 +104,8 @@ def main():
     # jobs_process_time=[i for i in range(1,1001)]
     # random.shuffle(jobs_process_time)
     jobs_process_time = [random.choice(range(1, 51)) for _ in range(100)]
+    # jobs_process_time = [9, 37, 49, 5, 17, 8, 32, 49, 29, 31, 42, 25, 14, 7, 32, 2, 25, 28, 39, 49, 50, 1, 45, 29, 18, 47, 15, 38, 7, 21, 2, 2, 2, 42, 35, 1, 25, 44, 14, 28, 47, 2, 34, 15, 49, 29, 32, 36, 15, 23, 15, 44, 15, 49, 30, 19, 2, 27, 36, 42, 7, 12, 41, 47, 19, 8, 48, 22, 47, 46, 33, 28, 33, 43, 13, 20, 19, 38, 32, 33, 26, 38, 3, 31, 16, 48, 26, 27, 43, 12, 24, 36, 45, 50, 44, 48, 24, 6, 29, 43]
+
 
     """
     # 20 jobs 4 machines

@@ -6,39 +6,55 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import softmax
-import math
-
-np.random.seed(0)
-random.seed(1)
+# TODO: seed!!!! (for second part of the first run)
+np.random.seed(4)
+random.seed(5)
 np.set_printoptions(threshold=sys.maxsize)
 num_of_chromosomes = 100
 XO_parameter = 49  # parameter that stores the numbers of chromosomes we'll perform XO over
 num_generations = 200003 # just initialization - change when necessary
 print_rate = 50000  # print to file and plot each this many generations
-methods = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']# ['fitness_sqrt']  #"fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
+methods = ['6', '7', '8', '9', '10']   # ['1', '2', '3', '4', '5']  # ['fitness_sqrt']  #"fitness", "fitness_squared", "fitness_softmax"]  # , 'objective', 'objective_softmax', 'objective_squared']
 
 
 class genetic:
+    """
+    Full Implementation of Genetic Algorithm as defined
 
-    def __init__(self, input_data, number_of_machines):  # input_data is a list of 2n jobs
-        self.number_of_genes = len(input_data)  # length is number of jobs
+    Example Usage: # TODO: example usage & fix & clean main
+        local_searcher = LocalSearch(state)
+        local_searcher.search()
+
+    Results can be found at: # TODO: fix result can be found at
+        local_searcher.curr_state
+        local_searcher.sum_processing_times_per_machine
+        local_searcher.sum_squared_processing_times
+
+    Args:
+        input_data: list of 2n jobs
+        number_of_machines: int, representing number of machines as given in the input
+
+    """
+
+    def __init__(self, input_data, number_of_machines):
+        self.number_of_genes = len(input_data)
         self.number_of_machines = number_of_machines
         # Defining the population_sample size
         self.num_of_chromosomes = num_of_chromosomes
         self.input_data = input_data
-        self.fitness_func = np.zeros(self.num_of_chromosomes)
-        self.Mutation_percentage = 1  # just random - still need to work on it
+        self.fitness_func = np.zeros(self.num_of_chromosomes) # initializing fitness function value
+        self.Mutation_percentage = 1  # just random - still need to work on it TODO: check what to do with it
         self.objective_function_value = np.zeros(self.num_of_chromosomes)  # initializing objective function value
         self.probabilities = np.zeros(self.num_of_chromosomes)  # initializing probabilities value for each chromosome
-        # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome
+        # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome TODO: check what to do with it
 
         # the complete self.population_sample, initializing the matrix with '-1' in every entry
         self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
-        self.sum_fitness_functions = 0  # initializing - check if it's the correct type
+        self.sum_fitness_functions = 0  # initializing
         self.mutated_indexes = []  # stores indexes of chromosomes who've been mutated
         self.sum_input_data = np.sum(input_data)
         self.XO_partners = -1 * np.ones((XO_parameter, 2), dtype=int)
-        self.best_population = deepcopy(self.population_sample)
+        self.best_population = deepcopy(self.population_sample) # stores best solution so far
         self.best_objective_function_mean = float('inf')
         self.sum_to_machines_avg = np.sum(self.input_data)/self.number_of_machines
 
@@ -49,35 +65,19 @@ class genetic:
     def action(self):
         """
         Performing Genetic algo approach
-        Returns:
-            # TODO: Add documentation
+        For each fitness method, it creates population, then send it to a different function to perform
+        the needed calculations.
+        It also calculates the mean objective function value, and writes the results to a file.
 
+        Returns: The last population after num_generations iterations, as well as data about the population.
         """
 
-        # print(f"{self.input_data}")
-        # self.objective_function_value = self.objective_func_calc(self.population_sample)
-        # print("First objective function value: ", self.objective_function_value)
-        # print("decoded:", self.decoding(self.population_sample[0]))
-        # print((self.calc_probabilities(self.population_sample)))
-        # print(self.sum_fitness_functions)
-        # self.fitness_fuc_calc()
-        # print(self.objective_function_value)
-        # print(self.population_sample)
-        # self.perform_Mutation()
-        # print("After mutation:")
-        # print(self.population_sample)
-        # for indx in range(self.num_of_chromosomes):
-        #     self.correction(np.array([1,1,1,1,1,0,0,0,0,0]))n
         full_res = []
 
         for method in methods:
 
-            # const seed
-            # np.random.seed(0)
-            # random.seed(1)
             self.create_population()
             self.write_to_file("Initialize", method)
-
 
             res = []
             for generation in range(num_generations + 1):
@@ -89,11 +89,8 @@ class genetic:
                 print(f"gen {generation} complete")
 
                 if generation % print_rate < 2:
-                    # print(f"gen {generation} complete")
-                    # if generation < num_generations:
-                    # for i in range(4):
+
                     self.write_to_file(generation, method)
-                    # generation = generation + 1
 
                     self.plot_results(res, method, is_full=False)
 
@@ -106,6 +103,13 @@ class genetic:
         print(f'saving results to {self.file_path}')
 
     def calc_mean_and_update_best(self):
+        """
+        calculates mean objective function value, and if it's better than the current best objective function value -
+        updates it as the new best objective function value.
+
+        Returns: mean objective function value
+
+        """
         mean_obj_func = self.objective_function_value.mean()
 
         if mean_obj_func < self.best_objective_function_mean:
@@ -115,29 +119,30 @@ class genetic:
         return mean_obj_func
 
     def action_iteration(self, method):
+        """
+        Performing the necessary calculations for the Algorithm.
+        It first clears the list of the mutated indexes, then calculating objective function values, fitness function values,
+        and probabilities for the current population.
+        From this data it performs elitism, Mutation and choosing (and performing) XO.
+        Args:
+            method: The current fitness function method
+
+        Returns:
+
+        """
         self.mutated_indexes.clear()
 
         self.objective_func_calc()
-        # print(self.objective_function_value)
 
         self.fitness_func_calc()
-        # print(self.fitness_func)
 
         self.calc_probabilities(method)
-        # print(self.probabilities)
 
         self.elitism()
-        # self.elitism()
-        # self.elitism()
-        # print(self.population_sample[self.mutated_indexes])
-        # print(self.decoding(self.population_sample[self.mutated_indexes][0]))
 
         self.perform_Mutation()
-        # print(self.population_sample[self.mutated_indexes])
 
-        # print("XO")
         self.choose_parents_for_XO()
-        # print(self.XO_partners)
 
         for indx in range(XO_parameter):
             # TODO: how to choose them using fitnees function?
@@ -147,6 +152,16 @@ class genetic:
                 self.perform_XO(self.XO_partners[indx, 0], self.XO_partners[indx, 1])
 
     def write_to_file(self, generation, method):
+        """
+        Writing the necessary data to the file
+
+        Args:
+            generation: The current generation we're in
+            method: The current fitness function method
+
+        Returns: None
+
+        """
         with open(self.file_path, "a") as f:
             print(f" ------------------------------- End of generation={generation}, method={method} -----------------------------", file=f)
             if generation =="Initialize":
@@ -178,6 +193,17 @@ class genetic:
 
 
     def plot_results(self, res, methods, is_full):
+        """
+        Plots the results visually
+
+        Args:
+            res: list of methos # TODO: check about this args
+            methods: The current fitness function method
+            is_full:
+
+        Returns:
+
+        """
         plt.figure(figsize=(16, 12))
         if is_full:
             for inx, method in enumerate(methods):
@@ -248,13 +274,11 @@ class genetic:
                 chromosome_i[random_index1] = random_machine
                 chromosome_i[random_index2] = random_machine
 
-        # print(self.population_sample)
-
     def objective_func_calc(self):
         """
         calculates objective function value by iterating every chromosome, and for each chromosome use decoding method
         to find the process time of each machine.
-        Then -  stores the maximal process time for each chromosome as the objective function value in the according position
+        Then - stores the maximal process time for each chromosome as the objective function value in the according position
 
         Args:
             sample: The current population_sample
@@ -262,33 +286,30 @@ class genetic:
         Updates Objective function value - max process time of every chromosome
 
         """
-        # print("calculating objective function value:")
 
         for i in range(self.num_of_chromosomes):
             self.objective_function_value[i] = np.max(self.decoding(self.population_sample[i]))
 
-    # TODO: I've added 1 so that no chromosome will receive the value '0' - check if OK or what/how to fix
+    # TODO:  - check if OK or what/how to fix
     def fitness_func_calc(self):
         """
         calculates current fitness function for this generation
         * First version: sum of all objective functions - objective function value for a given chromosome
 
+
+
         Returns: None
 
         """
-        # print("Calculating fitness function:")
-
+        # First fitness function calculation
         #self.fitness_func = self.sum_input_data - self.objective_function_value
 
-        # trying new fitness func:
+        # Second fitness function calculation
+        # I've added 1 so that no chromosome will receive the value '0'
         mean_obj_func = np.sum(self.input_data)/ self.number_of_machines
         self.fitness_func = 1/(self.objective_function_value - mean_obj_func + 1)
 
 
-
-        # print(self.fitness_func)
-
-    # TODO: check if actually working, he
     def choose_parents_for_XO(self):
         """
         choosing parents (?) for XO
@@ -296,7 +317,6 @@ class genetic:
 
         """
         # np array that contains the pairs of chromosomes for XO
-
         available_to_xo_indexes = list(range(num_of_chromosomes))
 
         for i in range(XO_parameter):  # TODO: check if it's actually working
@@ -304,23 +324,29 @@ class genetic:
                 random.choices(available_to_xo_indexes, weights=self.probabilities[available_to_xo_indexes], k=2))
             self.XO_partners[i] = x
 
-    # TODO: check if working, and if giving 2 chromosomes is neccessary
-    # TODO: first keep working on that!
     def perform_XO(self, index_1, index_2):
         """
-        Actually doing the XO
-        Returns:
+        Performin XO:
+            1. Randomly chose XO_position
+            2. Randomly chose 'side' s.t we'll switch the chromosome's tails to the right or left of the XO_position
+            3. According to the XO_position and side, we'll perform the XO for the given chromosomes
+            4. Send the 2 chromosomes for 'correction' - the XO might cause a case in which the partition
+               won't be even.
+        Args: 2 indexes of chromosomes to perform XO over them
+        Returns: None
 
         """
         xo_position = random.choice(list(range(self.number_of_genes)))
-        xo_side = random.choice(['right','left'])
-        # TODO makesure updates self.pop
+        xo_side = random.choice(['right', 'left'])
+
         chrome1 = self.population_sample[index_1]
         chrome2 = self.population_sample[index_2]
+
         if xo_side =='right':
             temp = deepcopy(chrome1[xo_position:])
             chrome1[xo_position:] = chrome2[xo_position:]
             chrome2[xo_position:] = temp
+
         else:
             temp = deepcopy(chrome1[:xo_position])
             chrome1[:xo_position] = chrome2[:xo_position]
@@ -330,9 +356,7 @@ class genetic:
         self.correction(chrome1)
         self.correction(chrome2)
 
-        # return chromosome_1, chromosome_2
 
-    # TODO: check if working
     def perform_Mutation(self):
         """
         Perform Mutation:

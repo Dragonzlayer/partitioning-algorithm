@@ -260,8 +260,6 @@ class genetic:
             for j in range(int((self.number_of_genes / 2))):
                 # Each time, generate 2 random jobs from the list and randomly assign a machine for them
 
-                # TODO: check uniforn distribution
-
                 random_index1 = random.choice(index_list)
                 index_list.remove(random_index1)
                 random_index2 = random.choice(index_list)
@@ -319,7 +317,7 @@ class genetic:
         # np array that contains the pairs of chromosomes for XO
         available_to_xo_indexes = list(range(num_of_chromosomes))
 
-        for i in range(XO_parameter):  # TODO: check if it's actually working
+        for i in range(XO_parameter):
             x = np.array(
                 random.choices(available_to_xo_indexes, weights=self.probabilities[available_to_xo_indexes], k=2))
             self.XO_partners[i] = x

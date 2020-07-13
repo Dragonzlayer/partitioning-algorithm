@@ -24,11 +24,11 @@ class B_B:
         """
         Full Implementation of Branch & Bound Algorithm as defined
 
-        Example Usage: # TODO: example usage & fix & clean main
+        Example Usage:
             local_searcher = LocalSearch(state)
             local_searcher.search()
 
-        Results can be found at: # TODO: fix result can be found at
+        Results can be found at:
             local_searcher.curr_state
             local_searcher.sum_processing_times_per_machine
             local_searcher.sum_squared_processing_times
@@ -161,7 +161,7 @@ class B_B:
             # Replace the leading_partition to this partition and change current_obj_func_value
             # to the upper bound of this partition
             elif upper < self.current_obj_func_value:
-                # TODO: assign the dictionaries properly
+
                 # print(f"{upper} < {self.current_obj_func_value}. {self.leading_partition=}")
                 self.leading_partition = current_partition
                 self.current_obj_func_value = upper
@@ -188,7 +188,7 @@ class B_B:
             # when going all the way down in a sub-tree's node, search its adjacent nodes with the appropriate data
             self._undo_update(state, i)
 
-# TODO: check if more documentation is needed
+
     def _bounds_calc(self, input_state):
         """
         Calculating lower and upper bounds for the current input_state, as well as current partition using LPT algorithm
@@ -303,7 +303,7 @@ class B_B:
             return True
         return False
 
-# TODO: decide what to do with that shit
+
 def second_smallest(numbers):
     return nsmallest(2, numbers)[-1]
 
@@ -322,7 +322,7 @@ def run_with_params(dict_param_num):
     print("*********************************************** New Run ***********************************************")
     print("Number of machines: ", len(dict_param_num)-1)
     print("Total number of jobs:", len(dict_param_num['-1']))
-    B_B_RUN = B_B(dict_param_num) # TODO: check what the hell
+    B_B_RUN = B_B(dict_param_num)
 
     # Performing the first step of B&B algo, and then send it to another function to run the whole algorithm
     B_B_RUN.DFS_wrapper()

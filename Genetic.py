@@ -6,7 +6,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import softmax
-# TODO: seed!!!! (for second part of the first run)
+
 np.random.seed(4)
 random.seed(5)
 np.set_printoptions(threshold=sys.maxsize)
@@ -21,11 +21,11 @@ class genetic:
     """
     Full Implementation of Genetic Algorithm as defined
 
-    Example Usage: # TODO: example usage & fix & clean main
+    Example Usage:
         local_searcher = LocalSearch(state)
         local_searcher.search()
 
-    Results can be found at: # TODO: fix result can be found at
+    Results can be found at:
         local_searcher.curr_state
         local_searcher.sum_processing_times_per_machine
         local_searcher.sum_squared_processing_times
@@ -43,11 +43,10 @@ class genetic:
         self.num_of_chromosomes = num_of_chromosomes
         self.input_data = input_data
         self.fitness_func = np.zeros(self.num_of_chromosomes) # initializing fitness function value
-        self.Mutation_percentage = 1  # just random - still need to work on it TODO: check what to do with it
+        self.Mutation_percentage = 1  # just random - still need to work on it
         self.objective_function_value = np.zeros(self.num_of_chromosomes)  # initializing objective function value
         self.probabilities = np.zeros(self.num_of_chromosomes)  # initializing probabilities value for each chromosome
-        # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome TODO: check what to do with it
-
+        # self.obj_func_value_per_chromosome = np.array()  # will store objective function value for each chromosome
         # the complete self.population_sample, initializing the matrix with '-1' in every entry
         self.population_sample = -1 * np.ones((self.num_of_chromosomes, self.number_of_genes), dtype=int)
         self.sum_fitness_functions = 0  # initializing
@@ -145,7 +144,7 @@ class genetic:
         self.choose_parents_for_XO()
 
         for indx in range(XO_parameter):
-            # TODO: how to choose them using fitnees function?
+
             chrome1 = self.XO_partners[indx, 0]
             chrome2 = self.XO_partners[indx, 1]
             if chrome1 != chrome2:
@@ -197,7 +196,7 @@ class genetic:
         Plots the results visually
 
         Args:
-            res: list of methos # TODO: check about this args
+            res: list of methos
             methods: The current fitness function method
             is_full:
 
@@ -288,7 +287,6 @@ class genetic:
         for i in range(self.num_of_chromosomes):
             self.objective_function_value[i] = np.max(self.decoding(self.population_sample[i]))
 
-    # TODO:  - check if OK or what/how to fix
     def fitness_func_calc(self):
         """
         calculates current fitness function for this generation
@@ -521,3 +519,8 @@ class genetic:
                 chromosome[index_min_job] = j
 
 
+if __name__ == '__main__':
+    jobs_process_time = [random.choice(range(1, 51)) for _ in range(100)]
+    number_of_machines = 4
+    genetic_run = genetic(jobs_process_time, number_of_machines)
+    genetic_run.action()

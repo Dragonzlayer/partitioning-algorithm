@@ -7,7 +7,6 @@ From user:
 Then: draw processing time for each machine according to the lower and upper bounds given by the user and assign p.t for each job.
 """
 import numpy as np
-# np.random.seed(0)  # todo delete before submission
 
 
 MIN_NUM_MACHINES = 2
@@ -15,7 +14,7 @@ MIN_NUM_MACHINES = 2
 def get_parameters(CASE):
     while True:
         try:
-            number_of_machines = int(input("Number of machines: "))  # TODO make sure valid (int, >= 2) input
+            number_of_machines = int(input("Number of machines: "))
             if number_of_machines >= MIN_NUM_MACHINES:
                 print(number_of_machines)
                 break
@@ -26,7 +25,7 @@ def get_parameters(CASE):
 
     while True:
         try:
-            jobs_num = int(input("Number of jobs: "))  # TODO make sure valid - divisible by two
+            jobs_num = int(input("Number of jobs: "))
             if jobs_num % 2 == 0 and jobs_num>0:
                 print(jobs_num)
                 break
@@ -37,7 +36,7 @@ def get_parameters(CASE):
 
     while True:
         try:
-            lower_num = int(input("Lower bound: "))  # TODO make sure valid- non-negative number
+            lower_num = int(input("Lower bound: "))
             if lower_num >= 0:
                 print(lower_num)
                 break
@@ -48,7 +47,7 @@ def get_parameters(CASE):
 
     while True:
         try:
-            upper_num = int(input("Upper bound: "))  # TODO make sure valid
+            upper_num = int(input("Upper bound: "))
             if upper_num > lower_num:
                 print(upper_num)
                 break

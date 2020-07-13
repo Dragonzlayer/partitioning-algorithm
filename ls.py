@@ -1,6 +1,9 @@
+import random
 from itertools import combinations
 
 import numpy as np
+
+from init_parameters import get_parameters
 
 DEBUG = False  # Switch to True for prints during the run
 FULL_MODE = True  # If false caps run after 10M iterations
@@ -319,3 +322,31 @@ class LocalSearch:
             self.max_sum_processing_times = max_temp_sum_pt
             self.sum_squared_processing_times = temp_squared_sum_pt
             return True
+
+if __name__ == '__main__':
+
+    # receive input from user and draw process times
+    jobs_process_time, number_of_machines = get_parameters(CASE=1)
+
+    # initializing: putting all jobs in the first machine
+    initial_state = [{} for machine in range(number_of_machines)]
+
+    # initializing step 2: performing version of LPT to distribute the jobs
+    while jobs_process_time:
+       sum_processing_times_per_machine = np.array([sum(element.values()) for element in initial_state])
+       min_machine = np.argmin(sum_processing_times_per_machine)
+       job_id_1, job_val_1 = jobs_process_time.popitem()
+       job_id_2, job_val_2 = jobs_process_time.popitem()
+       initial_state[min_machine][job_id_1] = job_val_1
+       initial_state[min_machine][job_id_2] = job_val_2
+
+    local_searcher = LocalSearch(initial_state)
+    local_searcher.search()
+    print("Final state:")
+    for i, k in enumerate(local_searcher.curr_state):
+        print("machine nr. ", i, ":", k)
+
+    print("Number of jobs for each machine: ")
+    print([len(item) for item in local_searcher.curr_state])
+    print("Sum of process times for each machine: ", local_searcher.sum_processing_times_per_machine)
+    print("Squared sum of process times for each machine: ", local_searcher.sum_squared_processing_times)

@@ -216,11 +216,11 @@ def main():
     # for i, k in enumerate(initial_state):
     #    print("machine nr. ", i, ":", k)
 
-#    if RUN_LS:
-#       run_ls(initial_state)
+   if RUN_LS:
+      run_ls(initial_state)
 
-#    if RUN_BB:
-#        pass # TODO
+   if RUN_BB:
+       pass # TODO
 
 
     if RUN_GENETIC:
